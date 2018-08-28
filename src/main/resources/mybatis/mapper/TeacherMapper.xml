@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.system.mapper.TeacherMapper" >
+  <resultMap id="BaseResultMap" type="com.system.po.Teacher" >
+    <id column="userID" property="userid" jdbcType="INTEGER" />
+    <result column="userName" property="username" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="birthYear" property="birthyear" jdbcType="DATE" />
+    <result column="degree" property="degree" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="grade" property="grade" jdbcType="DATE" />
+    <result column="collegeID" property="collegeid" jdbcType="INTEGER" />
+  </resultMap>
+ 
+  <update id="updateByPrimaryKey" parameterType="com.system.po.Teacher" >
+    update teacher
+    set userName = #{username,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=VARCHAR},
+      birthYear = #{birthyear,jdbcType=DATE},
+      degree = #{degree,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      grade = #{grade,jdbcType=DATE},
+      collegeID = #{collegeid,jdbcType=INTEGER}
+    where userID = #{userid,jdbcType=INTEGER}
+  </update>
+</mapper>

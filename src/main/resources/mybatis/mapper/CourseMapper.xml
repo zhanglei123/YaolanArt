@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.system.mapper.CourseMapper" >
+  <resultMap id="BaseResultMap" type="com.system.po.Course" >
+    <id column="courseID" property="courseid" jdbcType="INTEGER" />
+    <result column="courseName" property="coursename" jdbcType="VARCHAR" />
+    <result column="teacherID" property="teacherid" jdbcType="INTEGER" />
+    <result column="courseTime" property="coursetime" jdbcType="VARCHAR" />
+    <result column="classRoom" property="classroom" jdbcType="VARCHAR" />
+    <result column="courseWeek" property="courseweek" jdbcType="INTEGER" />
+    <result column="courseType" property="coursetype" jdbcType="VARCHAR" />
+    <result column="collegeID" property="collegeid" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <update id="updateByPrimaryKey" parameterType="com.system.po.Course" >
+    update course
+    set courseName = #{coursename,jdbcType=VARCHAR},
+      teacherID = #{teacherid,jdbcType=INTEGER},
+      courseTime = #{coursetime,jdbcType=VARCHAR},
+      classRoom = #{classroom,jdbcType=VARCHAR},
+      courseWeek = #{courseweek,jdbcType=INTEGER},
+      courseType = #{coursetype,jdbcType=VARCHAR},
+      collegeID = #{collegeid,jdbcType=INTEGER},
+      score = #{score,jdbcType=INTEGER}
+    where courseID = #{courseid,jdbcType=INTEGER}
+  </update>
+</mapper>

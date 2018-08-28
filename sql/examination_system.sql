@@ -103,6 +103,94 @@ CREATE TABLE `goods` (
 
 
 
+-- ----------------------------
+-- Table structure for course_card 课程卡次
+-- ----------------------------
+DROP TABLE IF EXISTS `course_card`;
+CREATE TABLE `course_card` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL COMMENT '课程名称',
+  `type` int(11) NOT NULL COMMENT '1,年卡,2,季卡',
+  `num` int(5) NOT NULL COMMENT '节数',
+  `total_price` decimal(15,6) NOT NULL DEFAULT '0.000000' COMMENT '总价格',
+  `remark` varchar(1000) NOT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for course_promotion 课程活动
+-- ----------------------------
+DROP TABLE IF EXISTS `course_promotion`;
+CREATE TABLE `course_promotion` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL COMMENT '活动名称',
+  `type` int(11) NOT NULL COMMENT '类型，未定',
+  `num` int(5) NOT NULL COMMENT '节数',
+  `price` decimal(15,6) NOT NULL DEFAULT '0.000000' COMMENT '价格',
+  `content` varchar(1000) NOT NULL COMMENT '活动内容简介',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for teacher 教师
+-- ----------------------------
+DROP TABLE IF EXISTS `teacher`;
+CREATE TABLE `teacher` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) NOT NULL,
+  `sex` int(1) NOT NULL COMMENT '1男 2女',
+  `phone` varchar(20) NOT NULL COMMENT '电话',
+  `id_card` varchar(20) NOT NULL COMMENT '身份证号码',
+  `email` varchar(30) NOT NULL COMMENT '邮箱',
+  `qq` varchar(30) NOT NULL COMMENT 'QQ',
+  `image_path` varchar(50) NOT NULL COMMENT '个人图片路径',
+  `course_type` int(2) NOT NULL COMMENT '课程类型，1:国画，1:漫画',
+  `education_school` varchar(50) NOT NULL COMMENT '毕业学校',
+  `education_type` int(2) NOT NULL COMMENT '学历',
+  `education_year` int(4) NOT NULL COMMENT '毕业年份',
+  `status` int(2) NOT NULL COMMENT '状态 1:在职,2:离职,3:兼职',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -248,28 +336,4 @@ INSERT INTO `student` VALUES ('10004', '小华', '男', '1996-09-02', '2015-09-0
 INSERT INTO `student` VALUES ('10005', '小左', '女', '1996-09-02', '2015-09-02', '2');
 INSERT INTO `student` VALUES ('10006', '小拉', '女', '1996-09-02', '2015-09-02', '1');
 
--- ----------------------------
--- Table structure for teacher
--- ----------------------------
-DROP TABLE IF EXISTS `teacher`;
-CREATE TABLE `teacher` (
-  `userID` int(11) NOT NULL AUTO_INCREMENT,
-  `userName` varchar(200) NOT NULL,
-  `sex` varchar(20) DEFAULT NULL,
-  `birthYear` date NOT NULL,
-  `degree` varchar(20) DEFAULT NULL COMMENT '学历',
-  `title` varchar(255) DEFAULT NULL COMMENT '职称',
-  `grade` date DEFAULT NULL COMMENT '入职时间',
-  `collegeID` int(11) NOT NULL COMMENT '院系',
-  PRIMARY KEY (`userID`),
-  KEY `collegeID` (`collegeID`),
-  CONSTRAINT `teacher_ibfk_1` FOREIGN KEY (`collegeID`) REFERENCES `college` (`collegeID`)
-) ENGINE=InnoDB AUTO_INCREMENT=1004 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of teacher
--- ----------------------------
-INSERT INTO `teacher` VALUES ('1001', '刘老师', '女', '1990-03-08', '硕士', '副教授', '2015-09-02', '2');
-INSERT INTO `teacher` VALUES ('1002', '张老师', '男', '1996-09-02', '本科', '普通教师', '2015-09-02', '1');
-INSERT INTO `teacher` VALUES ('1003', '软老师', '男', '1996-09-02', '硕士', '助教', '2017-07-07', '1');
 

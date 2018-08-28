@@ -109,6 +109,62 @@ body
 .Reg_log_style .frame_style.form_errors label.password_icon{background-position: -39px 0px;}
 .Reg_log_style .frame_style.form_errors label.user_icon{background-position: -39px -30px;}
 .Reg_log_style .frame_style.form_errors label.Codes_icon{background-position: -40px -60px;}
+/*********添加教师样式属性********/
+#add_teacher{}
+.button_teacher{ position:absolute; bottom:10px; width:160px; left:45%}
+#add_teacher .left_add{ width:600px; float:left; border-right:1px solid #ddd; border-bottom:1px solid #dddddd; position:fixed;overflow:auto; z-index:234}
+#add_teacher .left_add .title_name{ width:599px;}
+#add_teacher .right_add{ float:left; margin-left:600px;position:fixed;overflow:auto; border-bottom:1px solid #dddddd;}
+#add_teacher .add_conent{ padding:15px;margin-top:40px}
+#add_teacher .add_conent li{ padding:10px 0px}
+#add_teacher .add_conent .label_name{ float:left; width:85px; margin-right:5px; text-align:right; line-height:30px;}
+#add_teacher .add_conent  li .textarea {
+    resize: none;
+    border: 1px solid #dddddd;
+    height: 200px;
+    width: 450px;
+}
+.produt_select_style .seach{ margin:0px; width:220px; border:0px;	padding-left:30px; }
+#add_teacher .add_conent  li .wordage{ display:block; color:#999; margin-left:100px; margin-top:10px}
+.p_select_list { padding:10px;}
+.p_select_list .select{
+	width:220px;
+	float:left; 	
+	padding:4px; 
+	height:100%;
+	border:0px;	
+}
+.p_select_list .select option{text-overflow: ellipsis; white-space: nowrap; width:200px;    overflow: hidden;}
+.p_select_list .seach_style{ position:relative;}
+.p_select_list .seach_style i{ position:absolute; left:5px; color:#999; top:3px;}
+.left_produt .select{border-bottom:1px solid #dddddd;}
+#add_teacher .title_name{ position:fixed;z-index:233}
+.p_select_list .Switching_btn{ width:80px; margin:0px 10px; float:left}
+.p_select_list .Switching{ display:block; margin:10px 0px}
+.p_select_list .Switching .btn{ width:80px;}
+.p_select_list .right_product{border:1px #dddddd solid; float:left; }
+.p_select_list .left_produt{border:1px #dddddd solid; float:left; }
+#add_teacher .left_add .demo { margin-left:10px;} 
+#add_teacher .left_add .resizebox{ width:125px; height:185px; border:1px solid #dddddd; text-align:center; margin-bottom:10px;}#add_teacher .left_add .prompt{ font-size:12px; color:#999; float:left; margin-top:10px; margin-left:10px}
+#add_teacher .left_add .prompt b,
+#add_teacher{} .left_add i{ color:#F00}
+#add_teacher .right_add .p_select_list { width:650px; margin-top:40px}
+#add_teacher .right_add .p_select_list .title_name{ height:30px; font-size:14px; line-height:30px; position: relative}
+/****************************课程卡次管理样式属性****************************/
+.teacher_style .add_content{}
+.teacher_style .add_content li{ margin-bottom:10px; line-height:32px;}
+.teacher_style .add_content li .label_name{ width:100px; float:left; text-align:right}
+.teacher_style .add_content li .content{  position:relative; left:100px;}
+.teacher_style .add_content li .date_Select{ display: none; float:left}
+.teacher_style .add_content li i{ color:#F33}
+.teacher_style .add_content li .add_date label{ margin-top:-5px; margin-left:10px;}
+
+
+
+
+
+
+
 /*****************************面包屑样式*****************************/
 #breadcrumbs .iframeurl{ color:#333;text-decoration : none;}
 /*********************************************小屏样式属性************************************************/
@@ -313,6 +369,8 @@ body
 .brand_list .table_menu_list table{ width:1366px}
 .brand_list .table_menu_list.Widescreen table{ width:100%}
 .brand_list { overflow:hidden; position: relative; border-top:1px solid #dddddd;border-left:1px solid #dddddd ;border-right: 1px solid #dddddd;}
+
+
 /*********添加品牌样式属性********/
 #add_brand{}
 .button_brand{ position:absolute; bottom:10px; width:160px; left:45%}
@@ -417,6 +475,7 @@ body
 .type_style .type_title,
 .cover_style .type_title,
 #add_brand .title_name,
+#add_teacher .title_name,
 .page_right_style .type_title,
 .admin_info_style .type_title,
 .Competence_add_style .title_name{
@@ -864,6 +923,7 @@ body
 .article_style .add_content li .date_Select{ display: none; float:left}
 .article_style .add_content li i{ color:#F33}
 .article_style .add_content li .add_date label{ margin-top:-5px; margin-left:10px;}
+
 /**************************************物查看样式属性*****************************************/
 #mohe-kuaidi_new .mh-wrap { margin: 6px 0;}
 #mohe-kuaidi_new .mh-wrap a {text-decoration: none; }

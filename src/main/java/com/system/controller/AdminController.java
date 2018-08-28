@@ -1,17 +1,15 @@
 package com.system.controller;
 
-import com.system.exception.CustomException;
-import com.system.po.*;
-import com.system.service.*;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
 import javax.annotation.Resource;
-import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.system.service.CollegeService;
+import com.system.service.CourseService;
+import com.system.service.StudentService;
+import com.system.service.TeacherService;
+import com.system.service.UserService;
 
 @Controller
 @RequestMapping("/admin")

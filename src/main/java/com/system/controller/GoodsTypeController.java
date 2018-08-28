@@ -39,14 +39,14 @@ public class GoodsTypeController {
         Wrapper<GoodsType> wrapper = new EntityWrapper<GoodsType>().orderBy("id", false);
         Page<GoodsType> selectPage = goodsTypeService.selectPage(new Page<GoodsType>(page,length), wrapper);
         List<GoodsType> list = selectPage.getRecords();
-        return JsonUtil.toDataTableMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
+        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
     }
     
     
     @RequestMapping(value = "/add")
     @ResponseBody
     public String add(@RequestParam(value = "name",required = true) String name,
-    		@RequestParam(value = "name",required = true) String remark) throws Exception {
+    		@RequestParam(value = "remark",required = true) String remark) throws Exception {
     	//分类名称不能重复
     	int count = goodsTypeService.selectCount(new EntityWrapper<GoodsType>().eq("name", name.trim()));
     	if (count >0) {

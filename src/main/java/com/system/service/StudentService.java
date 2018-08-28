@@ -9,12 +9,4 @@ import com.system.po.Student;
 public interface StudentService  extends IService<Student>{
 
 
-    //根据id删除学生信息
-    void removeById(Integer id) throws Exception;
-
-
-    //获取学生总数
-    int getCountStudent() throws Exception;
-
-
 }

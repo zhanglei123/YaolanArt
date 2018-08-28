@@ -52,7 +52,7 @@ public class SupplierController {
         
         Page<Supplier> selectPage = supplierService.selectPage(new Page<Supplier>(page,length), wrapper);
         List<Supplier> list = selectPage.getRecords();
-        return JsonUtil.toDataTableMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
+        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
     }
     
     

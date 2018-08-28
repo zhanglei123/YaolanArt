@@ -50,21 +50,9 @@ public class JsonUtil {
 		return JSON.toJSONString(resMap);
 	}
 	
-	/**
-	 * @description:使用fastjson处理
-	 * @author: lei.zhang2@100credit.com
-	 * @time: 2018年5月24日 下午5:58:48
-	 */
-	public static String toResponseMsg(ResponseCode code,List<?> list){
-		resMap.clear();
-		resMap.put("code", code.getCode());
-		resMap.put("message", code.getMsg());
-		resMap.put("list", list);
-		return JSON.toJSONString(resMap);
-	}
 	
 	/**
-	 * @description:使用fastjson处理
+	 * @description:使用fastjson处理,后台处理返回
 	 * 	draw: 表示请求次数
 		recordsTotal: 总记录数
 		recordsFiltered: 过滤后的总记录数
@@ -74,7 +62,7 @@ public class JsonUtil {
 	 * @param start 
 	 * @time: 2018年5月24日 下午5:58:48
 	 */
-	public static String toDataTableMsg(ResponseCode code,Integer draw,Integer totalNum,Integer filteredNum, List<?> list){
+	public static String toDataTableServerMsg(ResponseCode code,Integer draw,Integer totalNum,Integer filteredNum, List<?> list){
 		resMap.clear();
 		resMap.put("code", code.getCode());
 		resMap.put("message", code.getMsg());
@@ -84,6 +72,26 @@ public class JsonUtil {
 		resMap.put("list", list);
 		return JSON.toJSONString(resMap);
 	}
+	
+	/**
+	 * @description:使用fastjson处理,后台处理返回
+	 * 	draw: 表示请求次数
+		recordsTotal: 总记录数
+		recordsFiltered: 过滤后的总记录数
+		data: 具体的数据对象数组(页面可以 【这里对应页面js的  "dataSrc":"list"】设置)
+	 * @author: lei.zhang2@100credit.com
+	 * @param length 
+	 * @param start 
+	 * @time: 2018年5月24日 下午5:58:48
+	 */
+	public static String toDataTableFrontMsg(ResponseCode code,List<?> list){
+		resMap.clear();
+		resMap.put("code", code.getCode());
+		resMap.put("message", code.getMsg());
+		resMap.put("list", list);
+		return JSON.toJSONString(resMap);
+	}
+
 
 	public static void main(String[] args) {
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//这个是你要转成后的时间的格式

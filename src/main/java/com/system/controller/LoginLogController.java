@@ -50,6 +50,6 @@ public class LoginLogController {
 				.eq("user_id", currentUser.getId())
 				.orderBy("id", false));
         List<LoginLog> list = selectPage.getRecords();
-        return JsonUtil.toDataTableMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
+        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
     }
 }

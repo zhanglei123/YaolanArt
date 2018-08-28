@@ -1,85 +1,177 @@
 package com.system.po;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Teacher {
-    private Integer userid;
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableName;
 
-    private String username;
+@TableName("teacher")
+public class Teacher extends Model<CourseCard> {
+	private static final long serialVersionUID = 1L;
 
-    private String sex;
+	private Integer id;
 
-    private Date birthyear;
+	private String name;
 
-    private String degree;
+	private Integer sex;
 
-    private String title;
+	private String phone;
+	
+	@TableField(value="id_card")
+	private String idCard;
 
-    private Date grade;
+	private String email;
+	
+	private String qq;
+	
+	@TableField(value="image_path")
+	private String imagePath;
+	
+	@TableField(value="course_type")
+	private Integer courseType;
+	
+	@TableField(value="education_school")
+	private String educationSchool;
+	
+	@TableField(value="education_type")
+	private Integer educationType;
+	
+	@TableField(value="education_year")
+	private Integer educationYear;
+	
+	private Integer status;
 
-    private Integer collegeid;
+	@TableField(value="create_time")
+	private Date createTime;
+	
+	@TableField(value="update_time")
+	private Date updateTime;
 
-    public Integer getUserid() {
-        return userid;
-    }
+	@Override
+	protected Serializable pkVal() {
+		return id;
+	}
 
-    public void setUserid(Integer userid) {
-        this.userid = userid;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setUsername(String username) {
-        this.username = username == null ? null : username.trim();
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getSex() {
-        return sex;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setSex(String sex) {
-        this.sex = sex == null ? null : sex.trim();
-    }
+	public Integer getSex() {
+		return sex;
+	}
 
-    public Date getBirthyear() {
-        return birthyear;
-    }
+	public void setSex(Integer sex) {
+		this.sex = sex;
+	}
 
-    public void setBirthyear(Date birthyear) {
-        this.birthyear = birthyear;
-    }
+	public String getPhone() {
+		return phone;
+	}
 
-    public String getDegree() {
-        return degree;
-    }
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
-    public void setDegree(String degree) {
-        this.degree = degree == null ? null : degree.trim();
-    }
+	public String getIdCard() {
+		return idCard;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public void setIdCard(String idCard) {
+		this.idCard = idCard;
+	}
 
-    public void setTitle(String title) {
-        this.title = title == null ? null : title.trim();
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public Date getGrade() {
-        return grade;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public void setGrade(Date grade) {
-        this.grade = grade;
-    }
+	public String getQq() {
+		return qq;
+	}
 
-    public Integer getCollegeid() {
-        return collegeid;
-    }
+	public void setQq(String qq) {
+		this.qq = qq;
+	}
 
-    public void setCollegeid(Integer collegeid) {
-        this.collegeid = collegeid;
-    }
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	public Integer getCourseType() {
+		return courseType;
+	}
+
+	public void setCourseType(Integer courseType) {
+		this.courseType = courseType;
+	}
+
+	public String getEducationSchool() {
+		return educationSchool;
+	}
+
+	public void setEducationSchool(String educationSchool) {
+		this.educationSchool = educationSchool;
+	}
+
+	public Integer getEducationType() {
+		return educationType;
+	}
+
+	public void setEducationType(Integer educationType) {
+		this.educationType = educationType;
+	}
+
+	public Integer getEducationYear() {
+		return educationYear;
+	}
+
+	public void setEducationYear(Integer educationYear) {
+		this.educationYear = educationYear;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+	
 }

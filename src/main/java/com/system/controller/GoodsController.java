@@ -38,7 +38,7 @@ public class GoodsController {
         Wrapper<Goods> wrapper = new EntityWrapper<Goods>().orderBy("id", false);
         Page<Goods> selectPage = goodsService.selectPage(new Page<Goods>(page,length), wrapper);
         List<Goods> list = selectPage.getRecords();
-        return JsonUtil.toDataTableMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
+        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
     }
     
     

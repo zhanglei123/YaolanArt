@@ -1,16 +1,17 @@
 # 简介
-这个项目是一个简单的教务查询系统，该练手小项目希望能帮助到大家，熟悉SSM的整合开发
-
+摇篮艺术中心管理系统
+http://yaolanart.free.idcfengye.com
+ 
 # 使用技术
 IOC容器：Spring
 
 Web框架：SpringMVC
 
-ORM框架：Mybatis
+ORM框架：MybatisPlus
 
 安全框架：Shiro
 
-数据源：C3P0
+数据源：Druid
 
 日志：log4j
 
@@ -18,11 +19,11 @@ ORM框架：Mybatis
 
 # 快速上手
 ### 1、运行环境和所需工具
-* 编译器：IntelliJ IDEA
+* 编译器：eclipse
 * 项目构建工具：Maven
 * 数据库：Mysql
-* JDK版本：jdk1.8
-* Tomcat版本：Tomcat8.x
+* JDK版本：jdk1.7
+* Tomcat版本：Tomcat7.x
 ### 2、初始化项目
 * 在你的Mysql中，创建一个数据库名称为 YaolanArt 的数据库，并导入我提供的 .sql 文件,
 * 进入src/main/resources修改mysql.properties配置文件,把数据库登录名和密码，改为你本地的

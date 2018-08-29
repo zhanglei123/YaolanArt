@@ -25,8 +25,52 @@
 <script >
 var teacherTable;
 jQuery(function($) {
+	var CourseTypeList;
+	var EducationTypeList;
+	var TeacherStatusList;
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/teacher/getCourseTypeList.do',
+		success : function(data) {
+			if(data.code == "00"){
+				CourseTypeList = JSON.parse(data.object);
+			}else{
+				layer.msg("初始化课程信息失败！",{time:1000,icon:2});
+			}
+		}
+	});
+	//初始化学历
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/teacher/getEducationTypeList.do',
+		success : function(data) {
+			if(data.code == "00"){
+				EducationTypeList = JSON.parse(data.object);
+			}else{
+				layer.msg("初始化学历信息失败！",{time:1000,icon:2});
+			}
+		}
+	});
+	
+	//初始化教师状态
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/teacher/getTeacherStatusList.do',
+		success : function(data) {
+			if(data.code == "00"){
+				TeacherStatusList = JSON.parse(data.object);
+			}else{
+				layer.msg("初始化教师状态失败！",{time:1000,icon:2});
+			}
+		}
+	});
+	
+	
 	//加载列表信息
-	courseCardTable = $('#sample-table').DataTable({
+	teacherTable = $('#sample-table').DataTable({
 		//使用前台服务
 	    "serverSide": false,
 	    "ordering": false,//排序
@@ -48,114 +92,71 @@ jQuery(function($) {
 		}, {
 			"data" : "name"
 		},{
-			"data" : "courseType"
+			"data" : "courseType",
+			"render": function (data, type, full, callback) {
+				for (var key in CourseTypeList){
+        			if(data == CourseTypeList[key]){
+        				return key;
+        			}
+             	}
+            }
 		}, {
 			"data" : "phone"
 		},{
 			"data" : "idCard"
 		},{
-			"data" : "email"
+			"data" : "qq"
 		},{
-			"data" : "QQ"
-		},{
-			"data" : "educationType"
+			"data" : "educationType",
+			"render": function (data, type, full, callback) {
+				for (var key in EducationTypeList){
+        			if(data == EducationTypeList[key]){
+        				return key;
+        			}
+             	}
+            }
 		},{
 			"data" : "educationSchool"
 		},{
-			"data" : "educationYear"
+			"data" : "inTime",
+			"render": function (data, type, full, callback) {
+				return $.myTime.TimestampToTime(data);
+            }
 		},{
-			"data" : "status"
+			"data" : "status",
+			"render": function (data, type, full, callback) {
+				for (var key in TeacherStatusList){
+        			if(data == TeacherStatusList[key]){
+        				return key;
+        			}
+             	}
+            }
 		},{
 			"data" : null,
 			"render": function (data, type, row, callback) {
-				var html = "<a title='编辑' onclick='course_card_edit("+JSON.stringify(row)+")' href='javascript:;'  class='btn btn-xs btn-info' ><i class='fa fa-edit bigger-120'></i></a>";     
+				var html = "<a title='查看' onclick='teacher_detail("+row.id+")' href='javascript:;'  class='btn btn-xs btn-info' >查看</a>"+
+				"<a title='编辑' onclick='teacher_edit("+row.id+")' href='javascript:;'  class='btn btn-xs btn-info' >编辑</a>";     
 		        return html;
              }
 		}]
 	});
 	
 	
+	
+	
 });
 	
-/**添加课程卡次**/
-function add_teacher(index) {
-	//每次打开清空
-	$("#name").val("");
-	$("#num").val("");
-	$("#totalPrice").val("");
-	$("#remark").val("");
-	//剩余字数初始化
-	$("#textCount").text(200)
-	layer.open({
-		type : 1,
-		title : '添加课程卡次',
-		maxmin : true,
-		shadeClose : true, //点击遮罩关闭层
-		area : [ '650px', '' ],
-		content : $('#courese_card'),
-		btn : [ '提交', '取消' ],
-		yes : function(index, layero) {
-			var num = 0;
-			var str = "";
-			$(".Mandatory input[type$='text']").each(
-					function(n) {
-						if ($(this).val() == "") {
-							layer.alert(str += "" + $(this).attr("name")
-									+ "不能为空！\r\n", {
-								title : '提示框',
-								icon : 0,
-							});
-							num++;
-							return false;
-						}
-					});
-			
-			var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
-		    var totalPrice = $("#totalPrice").val();
-		    if (!reg.test(totalPrice)) {
-		    	layer.alert("总价格格式不正确！", {
-						title : '提示框',
-						icon : 0,
-				});
-				num++;
-				return false;
-		     };
-			if ($("#remark").val() == "") {
-				layer.alert("课程简介不能为空！", {
-					title : '提示框',
-					icon : 0,
-				});
-				num++;
-				return false;
-			}
-			if (num > 0) {
-				return false;
-			} else {
-				var type = $('#type option:selected').val();
-				//保存方法
-				$.ajax({
-					type : "post",
-					dataType : "json",
-					url : '/teacher/add.do',
-					data : {name:$("#name").val(),
-						num:$("#num").val(), 
-						type:type, 
-						totalPrice:totalPrice, 
-						remark:$("#remark").val()},
-					success : function(data) {
-							if(data.code == "00"){
-								layer.msg("添加成功",{time:1000,icon:1});
-								//teacherTable.draw(true);
-								teacherTable.ajax.reload();
-								layer.close(index);
-							}else{
-								layer.msg(data.message,{time:1000,icon:2});
-							}
-					}
-				});
-			}
-		}
-	})
+/**查看教师详情**/
+function teacher_detail(id) {
+	window.location.href = "teacher_detail.html?id="+id;
+}
+/**编辑教师详情**/
+function teacher_edit(id) {
+	if(id){
+		window.location.href = "teacher_edit.html?id="+id;
+	}else{
+		window.location.href = "teacher_add.html";
+	}
 }
 /*编辑卡次*/
 function course_card_edit(row) {
@@ -173,7 +174,7 @@ function course_card_edit(row) {
 	//剩余字数初始化
 	$("#textCount").text(200)
 	//剩余字数初始化
-	$("#textCount").text(200-$("#remark").val().length)
+	//$("#textCount").text(200-$("#remark").val().length)
 	
 	layer.open({
 		type : 1,
@@ -257,7 +258,7 @@ function course_card_edit(row) {
  <div class="Feedback_style">
   <div class="border clearfix">
        <span class="l_f">
-        	<a href="javascript:;"  title="添加教师" onclick="add_teacher()" class="btn btn-warning Order_form"><i class="icon-plus"></i>添加教师</a>
+        	<a onclick='teacher_edit()' href='javascript:;' title="添加教师" class="btn btn-warning Order_form"><i class="icon-plus"></i>添加教师</a>
        </span>
      </div>
     <div class="feedback">
@@ -265,17 +266,16 @@ function course_card_edit(row) {
      	 <thead>
 			 <tr>
 				<th width="5%">ID</th>
-				<th width="10%">姓名</th>
-				<th width="10%">课程</th>
+				<th width="8%">姓名</th>
+				<th width="8%">课程</th>
 				<th width="10%">手机号</th>
-				<th width="10%">身份证号</th>
-				<th width="10%">邮箱</th>
-				<th width="10%">QQ</th>
-				<th width="10%">学历</th>
+				<th width="12%">身份证号</th>
+				<th width="8%">QQ</th>
+				<th width="5%">学历</th>
 				<th width="10%">学校</th>
-				<th width="10%">毕业年份</th>
-				<th width="10%">状态</th>
-				<th width="10%">操作</th>
+				<th width="15%">入职时间</th>
+				<th width="5%">状态</th>
+				<th width="15%">操作</th>
 	          </tr>
      	 </thead>
 		<tbody>

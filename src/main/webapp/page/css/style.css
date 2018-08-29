@@ -159,6 +159,26 @@ body
 .teacher_style .add_content li i{ color:#F33}
 .teacher_style .add_content li .add_date label{ margin-top:-5px; margin-left:10px;}
 
+/****************************文章管理样式属性****************************/
+.course_card_style .add_content{}
+.course_card_style .add_content li{ margin-bottom:10px; line-height:32px;}
+.course_card_style .add_content li .label_name{ width:105px; float:left; text-align:right}
+.course_card_style .add_content li .content{  position:relative; left:100px;}
+.course_card_style .add_content li .date_Select{ display: none; float:left}
+.course_card_style .add_content li i{ color:#F33}
+.course_card_style .add_content li .add_date label{ margin-top:-5px; margin-left:10px;}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

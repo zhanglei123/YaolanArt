@@ -32,7 +32,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-INSERT INTO `user` VALUES ('1', 'admin', '123', '张三','1','13388888888','888888@qq.com','888888',0,now(),now());
+INSERT INTO `user` VALUES ('1', 'admin', 'a', '张三','1','13388888888','888888@qq.com','888888',0,now(),now());
 
 
 -- ----------------------------
@@ -152,8 +152,11 @@ CREATE TABLE `teacher` (
   `course_type` int(2) NOT NULL COMMENT '课程类型，1:国画，1:漫画',
   `education_school` varchar(50) NOT NULL COMMENT '毕业学校',
   `education_type` int(2) NOT NULL COMMENT '学历',
-  `education_year` int(4) NOT NULL COMMENT '毕业年份',
+  `education_time` datetime DEFAULT NULL COMMENT '毕业时间',
   `status` int(2) NOT NULL COMMENT '状态 1:在职,2:离职,3:兼职',
+  `in_time` datetime DEFAULT NULL COMMENT '入职时间',
+  `out_time` datetime DEFAULT NULL COMMENT '离职时间',
+  `remark` varchar(1000) DEFAULT '' COMMENT '个人说明',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)

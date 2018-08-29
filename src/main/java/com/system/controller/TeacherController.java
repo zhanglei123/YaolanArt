@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -22,9 +24,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.system.base.ResponseCode;
+import com.system.enums.CourseTypeEnum;
+import com.system.enums.EducationTypeEnum;
+import com.system.enums.TeacherStatusEnum;
 import com.system.po.Teacher;
 import com.system.service.TeacherService;
 import com.system.util.JsonUtil;
+
+import net.sf.json.JSONObject;
 
 @Controller
 @RequestMapping(value = "/teacher")
@@ -42,12 +49,19 @@ public class TeacherController {
     }
     
     
+    @RequestMapping(value = "getTeacherById")
+    @ResponseBody
+    public String getTeacherById(@RequestParam(value = "id",required = true) Integer id) throws Exception {
+    	Teacher teacher = teacherService.selectById(id);
+        return JsonUtil.toResponseObj(ResponseCode.SUCCESS,teacher);
+    }
+    
     @RequestMapping(value = "/add")
     @ResponseBody
     public String add(@ModelAttribute Teacher teacher) throws Exception {
     	teacher.setCreateTime(new Date());
     	teacherService.insert(teacher);
-        return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
+    	return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
     }
     
     @RequestMapping(value = "/update")
@@ -57,6 +71,70 @@ public class TeacherController {
     	teacherService.insertOrUpdate(card);
         return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
     }
+    
+    /**
+     * @description:获取课程分类信息
+     * 				从枚举类中获取，后期如升级可从字典中获取
+     * @author: lei.zhang2@100credit.com
+     * @time: 2018年8月29日 下午3:56:54
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "getCourseTypeList")
+    @ResponseBody
+    public String getCourseTypeList() throws Exception {
+    	Map<String, Integer> resMap = new HashMap<>();
+    	CourseTypeEnum[] enums = CourseTypeEnum.values();
+    	for (CourseTypeEnum courseTypeEnum : enums) {
+    		resMap.put(courseTypeEnum.getName(), courseTypeEnum.getCode());
+		}
+    	JSONObject jsonObject = JSONObject.fromObject(resMap);
+        return JsonUtil.toResponseObj(ResponseCode.SUCCESS,jsonObject.toString());
+    }
+    
+    /**
+     * @description:获取学历分类信息
+     * 				从枚举类中获取，后期如升级可从字典中获取
+     * @author: lei.zhang2@100credit.com
+     * @time: 2018年8月29日 下午3:56:54
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "getEducationTypeList")
+    @ResponseBody
+    public String getEducationTypeList() throws Exception {
+    	Map<String, Integer> resMap = new HashMap<>();
+    	EducationTypeEnum[] enums = EducationTypeEnum.values();
+    	for (EducationTypeEnum educationTypeEnum : enums) {
+    		resMap.put(educationTypeEnum.getName(), educationTypeEnum.getCode());
+		}
+    	JSONObject jsonObject = JSONObject.fromObject(resMap);
+        return JsonUtil.toResponseObj(ResponseCode.SUCCESS,jsonObject.toString());
+    }
+    
+    /**
+     * @description:获取教师状态信息
+     * 				从枚举类中获取，后期如升级可从字典中获取
+     * @author: lei.zhang2@100credit.com
+     * @time: 2018年8月29日 下午3:56:54
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "getTeacherStatusList")
+    @ResponseBody
+    public String getTeacherStatusList() throws Exception {
+    	Map<String, Integer> resMap = new HashMap<>();
+    	TeacherStatusEnum[] enums = TeacherStatusEnum.values();
+    	for (TeacherStatusEnum teacherStatusEnum : enums) {
+    		resMap.put(teacherStatusEnum.getName(), teacherStatusEnum.getCode());
+		}
+    	JSONObject jsonObject = JSONObject.fromObject(resMap);
+        return JsonUtil.toResponseObj(ResponseCode.SUCCESS,jsonObject.toString());
+    }
+    
     
     @RequestMapping(value = "/uploadPersonImage")
     @ResponseBody

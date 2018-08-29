@@ -26,6 +26,18 @@ public class JsonUtil {
 	}
 	
 	/**
+	 * @description:返回一个对象参数
+	 * @author: lei.zhang2@100credit.com
+	 * @time: 2018年5月24日 下午5:58:48
+	 */
+	public static String toResponseObj(ResponseCode code,Object object){
+		resMap.clear();
+		resMap.put("code", code.getCode());
+		resMap.put("message", code.getMsg());
+		resMap.put("object", object);
+		return JSON.toJSONString(resMap);
+	}
+	/**
 	 * @description:使用fastjson处理
 	 * @author: lei.zhang2@100credit.com
 	 * @time: 2018年5月24日 下午5:58:48

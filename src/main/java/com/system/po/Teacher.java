@@ -38,10 +38,20 @@ public class Teacher extends Model<CourseCard> {
 	@TableField(value="education_type")
 	private Integer educationType;
 	
-	@TableField(value="education_year")
-	private Integer educationYear;
+	@TableField(value="education_time")
+	private Date educationTime;
 	
 	private Integer status;
+	
+	private String remark;
+	
+	/**入职时间*/
+	@TableField(value="in_time")
+	private Date inTime;
+	
+	/**离职时间*/
+	@TableField(value="out_time")
+	private Date outTime;
 
 	@TableField(value="create_time")
 	private Date createTime;
@@ -142,12 +152,12 @@ public class Teacher extends Model<CourseCard> {
 		this.educationType = educationType;
 	}
 
-	public Integer getEducationYear() {
-		return educationYear;
+	public Date getEducationTime() {
+		return educationTime;
 	}
 
-	public void setEducationYear(Integer educationYear) {
-		this.educationYear = educationYear;
+	public void setEducationTime(Date educationTime) {
+		this.educationTime = educationTime;
 	}
 
 	public Integer getStatus() {
@@ -173,5 +183,30 @@ public class Teacher extends Model<CourseCard> {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
+
+	public Date getInTime() {
+		return inTime;
+	}
+
+	public void setInTime(Date inTime) {
+		this.inTime = inTime;
+	}
+
+	public Date getOutTime() {
+		return outTime;
+	}
+
+	public void setOutTime(Date outTime) {
+		this.outTime = outTime;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
 	
 }

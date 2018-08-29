@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="renderer" content="webkit|ie-comp|ie-stand"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css"/>       
+<link href="assets/css/codemirror.css" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/css/ace.min.css" />
+<link rel="stylesheet" href="font/css/font-awesome.min.css" />
+<link href="Widget/icheck/icheck.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+	/**************************教师编辑************************/
+	.teacher_detailed_style .type{ 
+	    position:absolute;   
+	    width: 115px;
+	    height: 180px;
+	    left: -10px;
+	    top: -29px; 
+		/* background-image:url(images/ban1.png);  */
+		background-repeat:no-repeat; 
+		z-index:11
+	}
+	.teacher_detailed_style .teacher_logo{height: 190px;width: 130px; float:left; position:fixed;overflow:auto; z-index:234}
+	.teacher_detailed_style .teacher_content{ float:left; height:170px; width:100%; position:relative; padding-left:120px;}
+	.teacher_detailed_style .teacher_content li{ margin:5px 0px; height:32px; float:left; width:270px}
+	.teacher_detailed_style .teacher_content li.shop_name{ width:100%; float:none; position:relative}
+	.teacher_detailed_style .teacher_logo img{ border:1px solid #dddddd; padding:1px;}
+	.teacher_detailed_style .teacher_content li .label_name{ display:block; width:90px; text-align:right; float:left}
+	.teacher_detailed_style .add_adverts li .cont_style .logoupload{ margin-left:10px; position:relative}
+	.teacher_detailed_style .teacher_content li .info{ display:block; float:left; margin-left:10px;}
+	.teacher_Introduction{ border:0px solid #dddddd; position: relative; margin-top:35px;}
+	.teacher_Introduction .title_name{ background-color:#FFF;  top:-20px; font-size:18px; left:20px !important; padding:5px 20px;}
+	.teacher_Introduction .info{ margin:20px; line-height:24px;}
+	.teacher_detailed_style .teacher_content li.shop_name .Authenticate{ margin-left:10px; float:left;}
+	.teacher_detailed_style .teacher_content li.shop_name .Authenticate i{ background-image:url(../images/renz-icon.png); background-repeat:no-repeat; width:34px; height:34px; margin:0px 5px}
+	.Authenticate i.icon-grxx{ background-position: -45px -40px;}
+	.Authenticate i.icon-yxrz{background-position:-90px 0px}
+	.Authenticate i.icon-yhk{background-position: -3px -40px}
+	.Authenticate i.icon-sjrz{ background-position:-124px -40px}
+	.At_button{ width:250px; margin-left:auto; margin-right:auto; margin-top:30px}
+	.shop_reason{ padding:15px;}
+	.shop_reason .content{ border:1px solid #dddddd; margin-bottom:15px; padding:10px; display:block}
+	.shop_reason .form-control{ width:568px; height:200px; resize:none; margin-left:0px}
+	
+	.teacher_detailed_style .teacher_content li i{color:#F33}
+</style>
+
+<!--[if lte IE 8]>
+<link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+<![endif]-->
+<script src="js/jquery-1.9.1.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/typeahead-bs2.min.js"></script>           	
+<script src="assets/layer/layer.js" type="text/javascript" ></script>          
+<script src="assets/laydate/laydate.js" type="text/javascript"></script>
+<script type="text/javascript" src="Widget/swfupload/swfupload.js"></script>
+<script type="text/javascript" src="Widget/swfupload/swfupload.queue.js"></script>
+<script type="text/javascript" src="Widget/swfupload/swfupload.speed.js"></script>
+<script type="text/javascript" src="Widget/swfupload/handlers.js"></script>
+<script type="text/javascript" src="js/zlUtil.js"></script>
+<script type="text/javascript" src="js/myTime.js"></script>
+<script>
+jQuery(function($) {
+	//上一个页面传过来的类型教师ID
+	var id = zlUrlParm.parm("id");
+	//展示当前用户信息
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/teacher/getTeacherById.do',
+		data: {id:id},
+		success : function(data) {
+			if (data.code == "00") {
+				//赋值
+				$("#name").html(data.object.name);
+				var sex = data.object.sex;
+				if(sex == 1){
+					$("#sex").html("男");
+				}else{
+					$("#sex").html("女");
+				}
+				$("#courseType").html(data.object.courseType);
+				$("#phone").html(data.object.phone);
+				$("#idCard").html(data.object.idCard);
+				$("#educationType").html(data.object.educationType);
+				$("#educationSchool").html(data.object.educationSchool);
+				$("#educationTime").html(data.object.educationTime);
+				$("#status").html(data.object.status);
+				$("#email").html(data.object.email);
+				$("#qq").html(data.object.qq);
+				$("#remark").html(data.object.remark);
+				$("#inTime").html($.myTime.TimestampToTime(data.object.inTime));
+				
+				$("#imagePath").attr('src', data.object.imagePath);
+			} else {
+				location.href = "login.html";
+				layer.close(index);
+			}
+		}
+	});
+	
+	
+});
+
+
+
+
+
+
+
+//通过
+var index = parent.layer.getFrameIndex(window.name);
+parent.layer.iframeAuto(index);
+//返回操作
+function return_close(){
+	location.href="teacher_list.html";
+}
+</script>
+<title>教师信息</title>
+</head>
+
+<body>
+<div class="margin clearfix">
+ <div class="teacher_detailed_style clearfix">
+ <em class="type"></em>
+  	<div class="teacher_logo">
+		<div class="demo l_f">
+			<div class="logobox">
+				<div class="resizebox">
+					<img src="images/image.png" id = "imagePath" width="100px" alt="" height="140px" />
+				</div>
+			</div>
+		</div>
+	</div>
+  	<ul class="teacher_content clearfix">
+	    <li class="shop_name"><label class="label_name">教师名称：</label><span class="info" id="name"></span></li>
+	    <li><label class="label_name">性&nbsp;&nbsp;&nbsp;&nbsp;别：</label>
+	    	<span class="info" id="sex"></span>
+		</li>
+	    <li>
+	    <label class="label_name">课&nbsp;&nbsp;&nbsp;&nbsp;程：</label>
+    		<span class="info" id="courseType"></span>
+		</li>
+	    <li><label class="label_name">入职时间：</label><span class="info" id="inTime"></span></li>
+	    <li><label class="label_name">状&nbsp;&nbsp;&nbsp;&nbsp;态：</label>
+			<span class="info" id="status"></span>
+		</li>
+	    <li><label class="label_name">学&nbsp;&nbsp;&nbsp;&nbsp;历：</label>
+	    	<span class="info" id="educationType"></span>
+		</li>
+	    <li><label class="label_name">毕业院校：</label><span class="info" id="educationSchool"></span></li>
+	    <li><label class="label_name">毕业时间：</label><span class="info" id="educationTime"></span></li>
+	    <li><label class="label_name">移动电话：</label><span class="info" id="phone"></span></li>
+	    <li><label class="label_name">QQ：</label><span class="info" id="qq"></span></li>
+	    <li><label class="label_name">电子邮箱：</label><span class="info" id="email"></span></li>
+	    <li><label class="label_name">身份证号：</label><span class="info" id="idCard"></span></li>
+  	 </ul>
+ </div>
+ <div class="teacher_Introduction">
+  <div class="title_name"><i style="color:#F33">*</i>教师简介</div>
+ 	<textarea name="简介" class="form-control" id="remark" style="height: 200px;width: 95%"></textarea>
+ </div>
+ 
+ <div class="At_button">
+	<button onclick="return_close();" class="btn btn-default radius" type="button">返回上一步</button>
+ </div>
+</div>
+</body>
+</html>
+

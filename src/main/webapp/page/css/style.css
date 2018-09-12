@@ -192,7 +192,7 @@ body
 .Resolution .list_right_style .search_style,
 .Resolution .article_list .table,
 .Resolution .Ads_list .border, 
-.Resolution .brand_list .table_menu_list.Widescreen table{ width:1366px;}
+/* .Resolution .brand_list .table_menu_list.Widescreen table{ width:1366px;} */
 .Resolution .Ads_list.Widescreen .dataTables_wrapper,
 .Resolution .Ads_list.Widescreen .border,
 .Resolution .Ads_list.Widescreen .article_list .table,
@@ -684,9 +684,6 @@ body
 .admin_info_style .admin_modify_style{ width:400px; border-right:1px solid #dddddd; float:left }
 .admin_info_style  .xinxi,
 .admin_info_style .recording_list{ padding:10px;}
-.admin_info_style  .xinxi .add_sex ,
-.admin_info_style  .xinxi.hover .sex { display: none;}
-.admin_info_style  .xinxi.hover .add_sex {display: block;}
 .admin_info_style .Button_operation button{ float:left;}
 .admin_info_style .Button_operation .btn-success{ display:none}
 .admin_info_style  .xinxi span{ color:#858585}
@@ -734,7 +731,7 @@ body
 .grading_style .table_menu_list{ width:100%}
 /********************************广告界面样式属性*************************/
 .Ads_list,
-.order_list_style{ padding:15px;margin-left:220px; float:right; position: absolute; overflow:auto;}
+.order_list_style{ padding:15px;margin-left:220px; float:right; position: absolute;}
 .Ads_list .ad_img{ overflow:hidden; height:80px; display:block}
 .Ads_list.Widescreen,
 .order_list_style.Widescreen { margin-left:0px;}

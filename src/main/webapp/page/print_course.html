@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="renderer" content="webkit|ie-comp|ie-stand"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+<link href="assets/css/codemirror.css" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/css/ace.min.css" />
+<link rel="stylesheet" href="font/css/font-awesome.min.css" />
+	<!--[if lte IE 8]>
+  <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+<![endif]-->
+<script src="js/jquery-1.4.4.min.js"></script>
+<script src="js/jquery.jqprint-0.3.js"></script>
+<script type="text/javascript" src="js/zlUtil.js"></script> 
+<style media="print" type="text/css">
+.noprint {
+	visibility: hidden
+}
+</style>
+<style type="text/css">
+* {
+	padding: 0;
+	margin: 0;
+}
+h1 {
+	font-size: 20px;
+}
+h3 {
+	font-size: 16px;
+}
+.left {
+	float: left;
+}
+.right {
+	float: right;
+}
+.clearfix {
+	clear: both;
+}
+ul {
+	list-style: none;
+}
+.print_container {
+	padding: 20px;
+	width: 188px;
+}
+.section1 {
+	
+}
+.section2 label {
+	display: block;
+}
+.section3 label {
+	display: block;
+}
+
+.section4 {
+}
+.section4 .total label {
+	display: block;
+}
+.section4 .other_fee {
+	border-bottom: 1px solid #DADADA;
+}
+.section5 label {
+	display: block;
+}
+</style>
+<script language="javascript">
+jQuery(function($) {
+	var trueName= zlUrlParm.parm("trueName");
+	var rechargeId= zlUrlParm.parm("rechargeId");
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/studentConsumptionRecord/getRecordById.do',
+		data : {id:rechargeId},
+		success : function(data) {
+			if (data.code == "00") {
+				$("#userName").html(trueName);
+				$("#createTime").html(data.object.createTime);
+				$("#rechargeId").html(rechargeId);
+				$("#num").html(data.object.num);
+				$("#studentName").html(data.object.studentName);
+				$("#courseName").html(data.object.courseName);
+				$("#courseRemainNum").html(data.object.courseRemainNum);
+				$("#lessonName").html(data.object.lessonName);
+				
+				$("#print_area").jqprint();
+			} else {
+				layer.msg("刷课处理失败！",{time:1000,icon:2});
+			}
+		}
+	});
+	
+	
+	
+	
+})
+</script>
+
+</head>
+
+<body style="background-color: #fff;">
+	<div class="print_container" id="print_area">
+		<h1>瑶蓝艺术中心</h1>
+		<span>——————————————————————————</span>
+		<div class="section2">
+			<label>操作员：   <span id="userName">张三</span></label>
+			<label>操作时间：<span id="createTime">2018-09-10 12:00:00</span></label>
+			<label>小票编号：<span id="rechargeId">012</span></label>
+		</div>
+		<span>——————————————————————————</span>
+		<div class="section3">
+			<label>刷课次数：<span id="num">1</span></label>
+		</div>
+		<span>——————————————————————————</span>
+		<div class="section3">
+			<label>学生姓名：<span id="studentName">张博文</span></label>
+			<label>卡次名称：<span id="courseName">2018年卡一</span></label>
+			<label>卡次余次：<span id="courseRemainNum">12</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+			<label>课程名称：<span id="lessonName">漫画一级</span></label>
+		</div>
+		<span>——————————————————————————</span>
+		<div class="section5">
+			<label>地&nbsp;&nbsp;址：科学院南路</label>
+			<label>电&nbsp;&nbsp;话：12345678</label>
+		</div>
+	</div>
+</body>
+</html>

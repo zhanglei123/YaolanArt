@@ -1,65 +1,188 @@
 package com.system.po;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Student {
-    private Integer userid;
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableName;
 
-    private String username;
+@TableName("student")
+public class Student extends Model<Student> {
+	private static final long serialVersionUID = 1L;
 
-    private String sex;
+	private Integer id;
 
-    private Date birthyear;
+	private String name;
 
-    private Date grade;
+	private Integer sex;
+	
+	private Integer age;
+	
+	private String school;
+	
+	@TableField(value="class_name")
+	private String className;
+	
+	private String address;
+	
+	private Date birthday;
 
-    private Integer collegeid;
+	/**年级，0:幼儿园 1：一年级 2：二年级 。。。*/
+	private Integer grade;
+	
+	/**所选课程，可能有多个，不进行数据库映射*/
+	@TableField(exist = false)
+	private String courseName;
+	
+	@TableField(value="source_type")
+	private Integer sourceType;
+	
+	@TableField(value="image_path")
+	private String imagePath;
+	
+	/**状态 1:在读,2:离开*/
+	private Integer status;
+	
+	private String remark;
+	
+	@TableField(value="create_time")
+	private Date createTime;
+	
+	@TableField(value="update_time")
+	private Date updateTime;
 
-    public Integer getUserid() {
-        return userid;
-    }
+	@Override
+	protected Serializable pkVal() {
+		return id;
+	}
 
-    public void setUserid(Integer userid) {
-        this.userid = userid;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setUsername(String username) {
-        this.username = username == null ? null : username.trim();
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getSex() {
-        return sex;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setSex(String sex) {
-        this.sex = sex == null ? null : sex.trim();
-    }
+	public Integer getSex() {
+		return sex;
+	}
 
-    public Date getBirthyear() {
-        return birthyear;
-    }
+	public void setSex(Integer sex) {
+		this.sex = sex;
+	}
 
-    public void setBirthyear(Date birthyear) {
-        this.birthyear = birthyear;
-    }
+	public Integer getAge() {
+		return age;
+	}
 
-    public Date getGrade() {
-        return grade;
-    }
+	public void setAge(Integer age) {
+		this.age = age;
+	}
 
-    public void setGrade(Date grade) {
-        this.grade = grade;
-    }
+	public Date getBirthday() {
+		return birthday;
+	}
 
-    public Integer getCollegeid() {
-        return collegeid;
-    }
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
 
-    public void setCollegeid(Integer collegeid) {
-        this.collegeid = collegeid;
-    }
+	public Integer getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Integer grade) {
+		this.grade = grade;
+	}
+
+	public Integer getSourceType() {
+		return sourceType;
+	}
+
+	public void setSourceType(Integer sourceType) {
+		this.sourceType = sourceType;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public String getSchool() {
+		return school;
+	}
+
+	public void setSchool(String school) {
+		this.school = school;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getCourseName() {
+		return courseName;
+	}
+
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+
 }

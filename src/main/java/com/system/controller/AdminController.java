@@ -5,8 +5,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.system.service.CollegeService;
-import com.system.service.CourseService;
+import com.system.service.LessonService;
 import com.system.service.StudentService;
 import com.system.service.TeacherService;
 import com.system.service.UserService;
@@ -22,10 +21,7 @@ public class AdminController {
     private TeacherService teacherService;
 
     @Resource
-    private CourseService courseService;
-
-    @Resource
-    private CollegeService collegeService;
+    private LessonService courseService;
 
     @Resource
     private UserService userService;

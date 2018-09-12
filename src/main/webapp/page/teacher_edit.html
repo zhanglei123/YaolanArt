@@ -62,55 +62,22 @@
 <script type="text/javascript" src="Widget/swfupload/handlers.js"></script>
 <script type="text/javascript" src="js/zlUtil.js"></script> 
 <script type="text/javascript" src="js/myTime.js"></script>
+<script type="text/javascript" src="js/zlDictionary.js"></script>
 <script type="text/javascript" >
 jQuery(function($) {
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : '/teacher/getCourseTypeList.do',
-		success : function(data) {
-			if(data.code == "00"){
-				var rets = JSON.parse(data.object);
-				for (var key in rets){
-        			$('#courseType').append("<option value=\""+rets[key]+"\">"+key+"</option>");
-             	}
-			}else{
-				layer.msg("初始化课程信息失败！",{time:1000,icon:2});
-			}
-		}
-	});
+	//初始化课程
+	for (var key in LessonTypeEnum){
+		$('#courseType').append("<option value=\""+key+"\">"+LessonTypeEnum[key]+"</option>");
+ 	}
 	//初始化学历
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : '/teacher/getEducationTypeList.do',
-		success : function(data) {
-			if(data.code == "00"){
-				var rets = JSON.parse(data.object);
-				for (var key in rets){
-        			$('#educationType').append("<option value=\""+rets[key]+"\">"+key+"</option>");
-             	}
-			}else{
-				layer.msg("初始化学历信息失败！",{time:1000,icon:2});
-			}
-		}
-	});
+	for (var key in EducationTypeEnum){
+		$('#educationType').append("<option value=\""+key+"\">"+EducationTypeEnum[key]+"</option>");
+ 	}
+	
 	//初始化教师状态
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : '/teacher/getTeacherStatusList.do',
-		success : function(data) {
-			if(data.code == "00"){
-				var rets = JSON.parse(data.object);
-				for (var key in rets){
-        			$('#status').append("<option value=\""+rets[key]+"\">"+key+"</option>");
-             	}
-			}else{
-				layer.msg("初始化教师状态失败！",{time:1000,icon:2});
-			}
-		}
-	});
+	for (var key in TeacherStatusEnum){
+		$('#status').append("<option value=\""+key+"\">"+TeacherStatusEnum[key]+"</option>");
+ 	}
 	
 	//上一个页面传过来的类型教师ID
 	var id = zlUrlParm.parm("id");
@@ -441,13 +408,13 @@ function cancel_save(){
  </div>
 </div>
 <script type="text/javascript">
-	laydate({
+laydate.render({
 	    elem: '#inTime',
-	    event: 'focus' 
+	    calendar: true
 	});
-	laydate({
+laydate.render({
 	    elem: '#educationTime',
-	    event: 'focus' 
+	    calendar: true
 	});
 </script>
 </body>

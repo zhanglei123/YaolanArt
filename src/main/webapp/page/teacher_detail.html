@@ -55,13 +55,13 @@
 <script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/typeahead-bs2.min.js"></script>           	
 <script src="assets/layer/layer.js" type="text/javascript" ></script>          
-<script src="assets/laydate/laydate.js" type="text/javascript"></script>
 <script type="text/javascript" src="Widget/swfupload/swfupload.js"></script>
 <script type="text/javascript" src="Widget/swfupload/swfupload.queue.js"></script>
 <script type="text/javascript" src="Widget/swfupload/swfupload.speed.js"></script>
 <script type="text/javascript" src="Widget/swfupload/handlers.js"></script>
 <script type="text/javascript" src="js/zlUtil.js"></script>
 <script type="text/javascript" src="js/myTime.js"></script>
+<script type="text/javascript" src="js/zlDictionary.js"></script>
 <script>
 jQuery(function($) {
 	//上一个页面传过来的类型教师ID
@@ -82,19 +82,35 @@ jQuery(function($) {
 				}else{
 					$("#sex").html("女");
 				}
-				$("#courseType").html(data.object.courseType);
 				$("#phone").html(data.object.phone);
 				$("#idCard").html(data.object.idCard);
-				$("#educationType").html(data.object.educationType);
 				$("#educationSchool").html(data.object.educationSchool);
 				$("#educationTime").html(data.object.educationTime);
-				$("#status").html(data.object.status);
 				$("#email").html(data.object.email);
 				$("#qq").html(data.object.qq);
 				$("#remark").html(data.object.remark);
 				$("#inTime").html($.myTime.TimestampToTime(data.object.inTime));
 				
 				$("#imagePath").attr('src', data.object.imagePath);
+				
+				for (var key in LessonTypeEnum){
+					if(key == data.object.courseType){
+						$("#courseType").html(LessonTypeEnum[key]);
+					}
+			 	}
+				//初始化学历
+				for (var key in EducationTypeEnum){
+					if(key == data.object.educationType){
+						$("#educationType").html(EducationTypeEnum[key]);
+					}
+			 	}
+				
+				//初始化教师状态
+				for (var key in TeacherStatusEnum){
+					if(key == data.object.status){
+						$("#status").html(TeacherStatusEnum[key]);
+					}
+			 	}
 			} else {
 				location.href = "login.html";
 				layer.close(index);

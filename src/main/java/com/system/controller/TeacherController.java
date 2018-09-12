@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.system.base.ResponseCode;
-import com.system.enums.CourseTypeEnum;
+import com.system.enums.LessonTypeEnum;
 import com.system.enums.EducationTypeEnum;
 import com.system.enums.TeacherStatusEnum;
 import com.system.po.Teacher;
@@ -85,9 +85,9 @@ public class TeacherController {
     @ResponseBody
     public String getCourseTypeList() throws Exception {
     	Map<String, Integer> resMap = new HashMap<>();
-    	CourseTypeEnum[] enums = CourseTypeEnum.values();
-    	for (CourseTypeEnum courseTypeEnum : enums) {
-    		resMap.put(courseTypeEnum.getName(), courseTypeEnum.getCode());
+    	LessonTypeEnum[] enums = LessonTypeEnum.values();
+    	for (LessonTypeEnum LessonTypeEnum : enums) {
+    		resMap.put(LessonTypeEnum.getName(), LessonTypeEnum.getCode());
 		}
     	JSONObject jsonObject = JSONObject.fromObject(resMap);
         return JsonUtil.toResponseObj(ResponseCode.SUCCESS,jsonObject.toString());

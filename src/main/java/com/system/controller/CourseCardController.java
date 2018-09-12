@@ -1,5 +1,7 @@
 package com.system.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -41,7 +44,8 @@ public class CourseCardController {
     	if (count >0) {
     		return JsonUtil.toResponseMsg(ResponseCode.FAIL,"该课程卡次名称已存在");
 		}
-    	
+    	//计算平均价格
+    	card.setAveragePrice(card.getTotalPrice().divide(new BigDecimal(card.getNum()),0,RoundingMode.CEILING));
     	card.setCreateTime(new Date());
     	courseCardService.insert(card);
         return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
@@ -60,6 +64,13 @@ public class CourseCardController {
     	card.setUpdateTime(new Date());
     	courseCardService.insertOrUpdate(card);
         return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
+    }
+    
+    @RequestMapping(value = "/delete")
+    @ResponseBody
+    public String delete(@RequestParam(value = "id",required = true) Integer id) throws Exception {
+    	courseCardService.deleteById(id);
+    	return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
     }
     
    

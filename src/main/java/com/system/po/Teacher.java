@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 @TableName("teacher")
-public class Teacher extends Model<CourseCard> {
+public class Teacher extends Model<Teacher> {
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;

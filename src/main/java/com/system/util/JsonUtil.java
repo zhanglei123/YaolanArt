@@ -1,6 +1,6 @@
 package com.system.util;
 
-import java.text.SimpleDateFormat;
+import java.sql.Time;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.system.base.ResponseCode;
+import com.system.po.StudentLesson;
 import com.system.po.User;
 
 
@@ -85,8 +86,9 @@ public class JsonUtil {
 		return JSON.toJSONString(resMap);
 	}
 	
+	
 	/**
-	 * @description:使用fastjson处理,后台处理返回
+	 * @description:使用fastjson处理,前台处理返回
 	 * 	draw: 表示请求次数
 		recordsTotal: 总记录数
 		recordsFiltered: 过滤后的总记录数
@@ -105,10 +107,12 @@ public class JsonUtil {
 	}
 
 
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//这个是你要转成后的时间的格式
-		String sd = sdf.format(new Date(1535004251000l));   // 时间戳转换成时间
-		        System.out.println(sd);//打印出你要的时间
-
+		StudentLesson le = new StudentLesson();
+		le.setId(1);
+		le.setStartTime(new Time(1, 1, 1));
+		le.setCreateTime(new Date());
+		System.out.println(JSON.toJSONString(le));
 	}
 }

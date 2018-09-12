@@ -21,6 +21,10 @@ public class CourseCard extends Model<CourseCard>{
 	
 	@TableField(value="total_price")
 	private BigDecimal totalPrice;
+	
+	/**平均价格*/
+	@TableField(value="average_price")
+	private BigDecimal averagePrice;
 
     private String remark;
 	
@@ -124,6 +128,18 @@ public class CourseCard extends Model<CourseCard>{
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+
+
+	public BigDecimal getAveragePrice() {
+		return averagePrice;
+	}
+
+
+
+	public void setAveragePrice(BigDecimal averagePrice) {
+		this.averagePrice = averagePrice;
 	}
 
 

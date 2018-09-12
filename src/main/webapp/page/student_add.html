@@ -1,0 +1,557 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="renderer" content="webkit|ie-comp|ie-stand"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css"/>       
+<link href="assets/css/codemirror.css" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/css/ace.min.css" />
+<link rel="stylesheet" href="font/css/font-awesome.min.css" />
+<link href="Widget/icheck/icheck.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+	/**************************学员编辑************************/
+	.student_detailed_style .type{ 
+	    position:absolute;   
+	    width: 115px;
+	    height: 180px;
+	    left: -10px;
+	    top: -29px; 
+		/* background-image:url(images/ban1.png);  */
+		background-repeat:no-repeat; 
+		z-index:11
+	}
+	.student_detailed_style .student_logo{height: 190px;width: 130px; float:left; position:fixed;overflow:auto; z-index:234}
+	.student_detailed_style .student_content{ float:left; height:170px; width:100%; position:relative; padding-left:120px;}
+	.student_detailed_style .student_content li{ margin:5px 0px; height:32px; float:left; width:270px}
+	.student_detailed_style .student_content li.shop_name{ width:100%; float:none; position:relative}
+	.student_detailed_style .student_logo img{ border:1px solid #dddddd; padding:1px;}
+	.student_detailed_style .student_content li .label_name{ display:block; width:90px; text-align:right; float:left}
+	.student_detailed_style .add_adverts li .cont_style .logoupload{ margin-left:10px; position:relative}
+	.student_detailed_style .student_content li .info{ display:block; float:left; margin-left:10px;}
+	.student_Introduction{ border:0px solid #dddddd; position: relative; margin-top:35px;}
+	.student_Introduction .title_name{ background-color:#FFF;  top:-20px; font-size:18px; left:20px !important; padding:5px 20px;}
+	.student_Introduction .info{ margin:20px; line-height:24px;}
+	.student_detailed_style .student_content li.shop_name .Authenticate{ margin-left:10px; float:left;}
+	.student_detailed_style .student_content li.shop_name .Authenticate i{ background-image:url(../images/renz-icon.png); background-repeat:no-repeat; width:34px; height:34px; margin:0px 5px}
+	.Authenticate i.icon-grxx{ background-position: -45px -40px;}
+	.Authenticate i.icon-yxrz{background-position:-90px 0px}
+	.Authenticate i.icon-yhk{background-position: -3px -40px}
+	.Authenticate i.icon-sjrz{ background-position:-124px -40px}
+	.shop_reason{ padding:15px;}
+	.shop_reason .content{ border:1px solid #dddddd; margin-bottom:15px; padding:10px; display:block}
+	.shop_reason .form-control{ width:568px; height:200px; resize:none; margin-left:0px}
+	
+	.student_detailed_style .student_content li i{color:#F33}
+	.Store_Introduction{ border:1px solid #dddddd; position: relative; margin-top:35px;}
+	.Store_Introduction .title_name{ background-color:#FFF; position:absolute; top:-20px; font-size:18px; left:20px !important; padding:5px 20px;}
+	.Store_Introduction .info{ margin:20px; line-height:24px;}
+	
+	
+	/****************************新增联系人样式属性****************************/
+	.linkman_add_style .add_content{}
+	.linkman_add_style .add_content li{ margin-bottom:10px; line-height:32px;}
+	.linkman_add_style .add_content li .label_name{ width:105px; float:left; text-align:right}
+	.linkman_add_style .add_content li .content{  position:relative; left:100px;}
+	.linkman_add_style .add_content li .date_Select{ display: none; float:left}
+	.linkman_add_style .add_content li i{ color:#F33}
+	.linkman_add_style .add_content li .add_date label{ margin-top:-5px; margin-left:10px;}
+		
+</style>
+
+<!--[if lte IE 8]>
+<link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+<![endif]-->
+<script src="js/jquery.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/typeahead-bs2.min.js"></script>           	
+<script src="assets/layer/layer.js" type="text/javascript" ></script>          
+<script src="assets/laydate/laydate.js" type="text/javascript"></script>
+<script type="text/javascript" src="Widget/swfupload/swfupload.js"></script>
+<script type="text/javascript" src="Widget/swfupload/swfupload.queue.js"></script>
+<script type="text/javascript" src="Widget/swfupload/swfupload.speed.js"></script>
+<script type="text/javascript" src="Widget/swfupload/handlers.js"></script>
+<script src="assets/js/jquery.dataTables.js"></script>
+<script src="assets/js/jquery.dataTables.bootstrap.js"></script>
+<script type="text/javascript" >
+var linkmanTable;
+var linkmanTableData=[];
+$(document).ready(function() {
+	//初始化学员来源方式
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/student/getStudentSourceTypeList.do',
+		success : function(data) {
+			if(data.code == "00"){
+				var rets = JSON.parse(data.object);
+				for (var key in rets){
+        			$('#sourceType').append("<option value=\""+rets[key]+"\">"+key+"</option>");
+             	}
+			}else{
+				layer.msg("初始化学员来源方式失败！",{time:1000,icon:2});
+			}
+		}
+	});
+	
+	
+	//加载列表信息
+	/* linkmanTable = $('#linkmanTable').DataTable({
+		//使用前台服务
+		"paging": false,
+	    "serverSide": false,
+	    "info": false,
+	    "ordering": false,//排序
+	    "searching": false,//是否显示搜索
+	    "bFilter" : true, 
+         "columns" : [ 
+         		{  	//行号
+				    data: "no",
+				    render: function (data, type, row, meta) {
+					     var no = meta.settings._iDisplayStart + meta.row + 1;
+					     return no;
+				    }
+				},{
+         			"data" : "relationType",
+         			"render": function (data, type, full, callback) {
+	                    switch (data) {
+	                          case "1": return "母亲"; break;
+	                          case "2": return "父亲"; break;
+	                          case "3": return "奶奶"; break;
+	                          case "4": return "爷爷"; break;
+	                          case "5": return "姥姥"; break;
+	                          case "6": return "姥爷"; break;
+	                    }
+                   }
+         		},{
+         			"data" : "linkmanName"
+         		}, {
+         			"data" : "linkmanPhone"
+         		},{
+         			"data" : "isFirst"
+         		},{
+         			"data" : null,
+         			"render": function (data, type, row, meta) {
+         				var no = meta.settings._iDisplayStart + meta.row + 1;
+         				var html = /* "<a title='编辑' href='javascript:;' onclick='linkman_edit("+JSON.stringify(row)+")' class='btn btn-xs btn-info' >编辑</a>"+ */
+         					/*"<a title='删除' href='javascript:;'  onclick='linkman_del("+no+")' class='btn btn-xs btn-info' >删除</a>";     
+         		        return html;
+                }
+         }]
+	}); */
+	
+	
+	//分类简介控制字数
+	$("#remark").keyup(function(){
+		var curLength=$("#remark").val().length;	
+		if(curLength>=1000){
+			var num=$("#remark").val().substr(0,1000);
+			$("#remark").val(num);
+			layer.msg("超过字数限制",{time:1000,icon:2});
+		}else{
+			$("#textCount").text(1000-$("#remark").val().length)
+		}
+	});
+	
+});
+
+//保存信息
+function student_save(file) {
+	$(".student_content input[type$='text']").each(function(n) {
+		if ($(this).val().trim() == "" || $(this).val() == undefined || $(this).val() == null) {
+			layer.alert($(this).attr("name")+ "不能为空！\r\n", {
+				title : '提示框',
+				icon : 0,
+			});
+			return false;
+		}
+	});
+	
+	var remark=$("#remark").val();
+	if(remark.trim() == "" || remark == undefined || remark == null){
+		layer.alert("学员简介不能为空！", {
+			title : '提示框',
+			icon : 0,
+		});
+		return false;
+	}
+	
+	//图片
+	var imagePath=$("#imagePath").val();
+	if(imagePath.trim() == "" || imagePath == undefined || imagePath == null){
+		layer.alert("请上传一张图片！", {
+			title : '提示框',
+			icon : 0,
+		});
+		return false;
+	}
+	
+	var sex = $("input[name='sex']:checked").val();
+	var sourceType = $("select[id='sourceType'] option:selected").val();
+	var grade = $("select[id='grade'] option:selected").val();
+	var educationType = $("select[id='educationType'] option:selected").val();
+	var status = $("select[id='status'] option:selected").val();
+	
+	var relationType = $('#relationType option:selected').val();
+	var linkmanSex = 1;
+	if(relationType == 1 || relationType == 3 || relationType == 5){
+		linkmanSex = 2;
+	}
+	//保存方法
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/student/add.do',
+		data : {name:$("#name").val(), 
+				sex:sex,
+				age:$("#age").val(),
+				phone:$("#phone").val(),
+				idCard:$("#idCard").val(),
+				email:$("#email").val(),
+				school:$("#school").val(),
+				className:$("#className").val(),
+				address:$("#address").val(),
+				qq:$("#qq").val(),
+				grade:grade,
+				imagePath:imagePath,
+				sourceType:sourceType,
+				educationSchool:$("#educationSchool").val(),
+				educationTime:$("#educationTime").val()+" 00:00:01",
+				status:status,
+				educationType:educationType,
+				remark:$("#remark").val(),
+				birthday:$("#birthday").val()+" 00:00:01",
+				
+				//联系人信息
+				relationType:relationType,
+				linkmanSex:linkmanSex,
+				linkmanName:$("#linkmanName").val(),
+				linkmanPhone:$("#linkmanPhone").val()
+				},
+		success : function(data) {
+				if(data.code == "00"){
+					layer.msg("添加成功",{time:1000,icon:1});
+					location.href="student_list.html";
+				}else{
+					layer.msg(data.message,{time:1000,icon:2});
+				}
+		}
+	});
+	
+}
+
+
+function updateProgress(file) {
+	$('.progress-box .progress-bar > div').css('width',
+			parseInt(file.percentUploaded) + '%');
+	$('.progress-box .progress-num > b').html(
+			SWFUpload.speed.formatPercent(file.percentUploaded));
+	if (parseInt(file.percentUploaded) == 100) {
+		// 如果上传完成了
+		$('.progress-box').hide();
+	}
+}
+
+function initProgress() {
+	$('.progress-box').show();
+	$('.progress-box .progress-bar > div').css('width', '0%');
+	$('.progress-box .progress-num > b').html('0%');
+}
+
+function successAction(imagePath) {
+	//赋值
+	$('#imagePath').val(imagePath);
+	
+	var up_path = imagePath;
+	var up_width = "120";
+	var up_height = "177";
+	var _up_width, _up_height;
+	if (up_width > 120) {
+		_up_width = 120;
+		_up_height = _up_width * up_height / up_width;
+	}
+	$(".logobox .resizebox").css({
+		width : _up_width,
+		height : _up_height
+	});
+	$(".logobox .resizebox > img").attr('src', up_path);
+	$(".logobox .resizebox > img").attr('width', _up_width);
+	$(".logobox .resizebox > img").attr('height', _up_height);
+}
+
+var swfImageUpload;
+$(document).ready(
+	function() {
+		var settings = {
+			flash_url : "Widget/swfupload/swfupload.swf",
+			flash9_url : "Widget/swfupload/swfupload_fp9.swf",
+			upload_url : "/student/uploadPersonImage.do",// 接受上传的地址
+			file_post_name : "filedata",
+			//post_params: {"contentId" :$("#msgContentId").val()},
+			file_size_limit : "5MB",// 文件大小限制
+			file_types : "*.jpg;*.png;*.jpeg;",// 限制文件类型
+			file_types_description : "图片",// 说明，自己定义
+			file_upload_limit : 100,
+			file_queue_limit : 0,
+			custom_settings : {},
+			debug : false,
+			// Button settings
+			button_image_url : "Widget/swfupload/upload-btn.png",
+			button_width : "105",
+			button_height : "30 ",
+			button_placeholder_id : 'uploadBtnHolder',
+			button_window_mode : SWFUpload.WINDOW_MODE.TRANSPARENT,
+			button_cursor : SWFUpload.CURSOR.HAND,
+			button_action : SWFUpload.BUTTON_ACTION.SELECT_FILE,
+
+			moving_average_history_size : 40,
+
+			// The event handler functions are defined in handlers.js
+			swfupload_preload_handler : preLoad,
+			swfupload_load_failed_handler : loadFailed,
+			file_queued_handler : fileQueued,
+			file_dialog_complete_handler : fileDialogComplete,
+			upload_start_handler : function(file) {
+				initProgress();
+				updateProgress(file);
+			},
+			upload_progress_handler : function(file, bytesComplete,
+					bytesTotal) {
+				updateProgress(file);
+			},
+			upload_success_handler : function(file, data, response) {
+				// 上传成功后处理函数
+				var fileInfo = JSON.parse(data);;
+				if(fileInfo.code == "00"){
+					successAction(fileInfo.message);
+				}else{
+					layer.msg("上传失败",{time:1000,icon:2});
+				}
+			},
+			upload_error_handler : function(file, errorCode, message) {
+				alert('上传发生了错误！');
+			},
+			file_queue_error_handler : function(file, errorCode,
+					message) {
+				if (errorCode == -110) {
+					alert('您选择的文件太大了。');
+				}
+			}
+		};
+		swfImageUpload = new SWFUpload(settings);
+});
+
+
+//通过
+var index = parent.layer.getFrameIndex(window.name);
+parent.layer.iframeAuto(index);
+
+	 
+//取消操作
+function cancel_save(){
+	location.href="student_list.html";
+	parent.$('#parentIframe').css("display","none");
+	parent.$('.Current_page').css({"color":"#333333"});
+}
+
+
+
+</script>
+<title>学员信息</title>
+</head>
+
+<body>
+<div class="margin clearfix">
+ <div class="student_detailed_style clearfix">
+ <em class="type"></em>
+  	<div class="student_logo">
+		<div class="demo l_f">
+			<div class="logobox">
+				<div class="resizebox">
+					<img src="images/image.png" width="100px" alt="" height="140px" />
+				</div>
+			</div>
+			<div class="logoupload">
+				<div class="btnbox">
+					<a id="uploadBtnHolder" class="uploadbtn" href="javascript:;">上传替换</a>
+					<input type="hidden" id="imagePath"/>
+				</div>
+				<div style="clear: both; height: 0; overflow: hidden;"></div>
+				<div class="progress-box" style="display: none;">
+					<div class="progress-num">
+						上传进度：
+						<b>0%</b>
+					</div>
+					<div class="progress-bar">
+						<div style="width: 0%;" class="bar-line"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  	<ul class="student_content clearfix">
+	    <li class="shop_name"><label class="label_name"><i>* </i>学员名称：</label><input name="学员名称" type="text" id="name" value=""/></li>
+	    <li><label class="label_name"><i>* </i>性&nbsp;&nbsp;&nbsp;&nbsp;别：</label>
+	    	<span style="margin-left: 10px;">
+		    	<input name="sex" id = "man" type="radio" value ="1" class="ace" checked="checked"/>
+					<span class="lbl">男</span>
+				<input name="sex" id = "woman" type="radio" value ="2" class="ace"/>
+					<span class="lbl">女</span>
+			</span>
+		</li>
+		<li class="label_name"><label class="label_name"><i>* </i>年&nbsp;&nbsp;&nbsp;&nbsp;龄：</label><input name="年龄" type="text" id="age" value=""/></li>
+	    <li><label class="label_name"><i>* </i>生日：</label><input name="生日" type="text" id="birthday" value=""/></li>
+		<li class="label_name"><label class="label_name"><i>* </i>学&nbsp;&nbsp;&nbsp;&nbsp;校：</label><input name="学校" type="text" id="school" value=""/></li>
+	    <li><label class="label_name"><i>* </i>年&nbsp;&nbsp;&nbsp;&nbsp;级：</label>
+			<select class="col-xs-7 col-sm-5" name="年级" id="grade" style="margin-left:10px;width: 166.8px">
+				<option value="0">幼儿园</option>
+				<option value="1">一年级</option>
+				<option value="2">二年级</option>
+				<option value="3">三年级</option>
+				<option value="4">四年级</option>
+				<option value="5">五年级</option>
+				<option value="6">六年级</option>
+				<option value="7">七年级</option>
+				<option value="8">八年级</option>
+				<option value="9">九年级</option>
+				<option value="10">其他</option>
+			</select>
+		</li>
+		<li class="label_name"><label class="label_name"><i>* </i>班&nbsp;&nbsp;&nbsp;&nbsp;级：</label><input name="班级" type="text" id="className" value=""/></li>
+		<li class="label_name"><label class="label_name"><i>* </i>家庭住址：</label><input name="家庭住址" type="text" id="address" value=""/></li>
+	    <li><label class="label_name"><i style="color:#F33">*</i>学员来源：</label>
+			<select class="col-xs-7 col-sm-5" name="学员来源" id="sourceType" style="margin-left:10px;width: 166.8px">
+			</select>
+		</li>
+	   	<li>
+				<label class="label_name">
+					<i>*</i>
+					联系人关系
+				</label>
+					<select class="col-xs-7 col-sm-5" name="联系人关系" id="relationType" style="margin-left:10px;width: 166.8px">
+					  <option value ="1" id = "mother" selected="selected" >母亲</option>
+					  <option value ="2" id = "father">父亲</option>
+					  <option value ="3" id = "father">奶奶</option>
+					  <option value ="4" id = "father">爷爷</option>
+					  <option value ="5" id = "father">姥姥</option>
+					  <option value ="6" id = "father">姥爷</option>
+					</select>
+			</li>
+		   <li>
+				<label class="label_name">
+					<i>*</i>
+					姓名
+				</label>
+					<input name="姓名" type="text" id="linkmanName" class="col-xs-7 col-sm-5 " style="margin-left:10px;width: 166.8px"/>
+			</li>
+			
+			<li>
+				<label class="label_name">
+					<i>*</i>
+					电话
+				</label>
+					<input name="电话" type="text" id="linkmanPhone" class="col-xs-7 col-sm-5 " style="margin-left:10px;width: 166.8px"/>
+			</li>
+		
+		
+		
+		
+  	 </ul>
+ </div>
+ <div class="student_Introduction">
+  <div class="title_name"><i style="color:#F33">*</i>学生简介</div>
+ 	<textarea name="简介" class="form-control" id="remark" style="height: 200px;width: 95%"></textarea>
+ </div>
+ 
+ <span style="margin-left: 10px;">
+	剩余字数：
+	<span id="textCount" style="color: Red;">1000</span>
+	字	
+ </span>
+ </div>
+ 
+<!--  <div class="Store_Introduction">
+  <div class="title_name" ><i style="color:#F33">*</i>联系人信息</div>
+ 	 <div class="info">
+ 	</div>
+ 
+ <div class="Store_Introduction">
+  <div class="title_name"><i style="color:#F33">*</i>课程信息</div>
+  <div class="info">
+  </div>
+ </div> -->
+ <div style="text-align:center; width:100%;height:100%;margin-top: 20px;">
+				<button onclick="student_save();" class="btn btn-primary radius" type="submit">保存</button>
+				<button onclick="cancel_save();" class="btn btn-danger  btn-warning" type="button">取消</button>
+ </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<!--添加联系人图层-->
+<div id="linkman_info" style="display: none" class="linkman_add_style">
+	<div class="add_content" id="form-article-add">
+		<ul>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					<i>*</i>
+					联系人关系
+				</label>
+				<span class="formControls w_txt">
+					<select class="col-xs-7 col-sm-5" name="联系人关系" id="relationType" style="margin-left:10px;">
+					  <option value ="1" id = "mother" selected="selected" >母亲</option>
+					  <option value ="2" id = "father">父亲</option>
+					  <option value ="3" id = "father">奶奶</option>
+					  <option value ="4" id = "father">爷爷</option>
+					  <option value ="5" id = "father">姥姥</option>
+					  <option value ="6" id = "father">姥爷</option>
+					</select>
+				</span>
+			</li>
+		   <li class="clearfix Mandatory">
+				<label class="label_name">
+					<i>*</i>
+					姓名
+				</label>
+				<span class="formControls w_txt">
+					<input name="姓名" type="text" id="linkmanName" class="col-xs-7 col-sm-5 " />
+				</span>
+			</li>
+			
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					<i>*</i>
+					电话
+				</label>
+				<span class="formControls w_txt">
+					<input name="电话" type="text" id="linkmanPhone" class="col-xs-7 col-sm-5 " />
+				</span>
+			</li>
+		</ul>
+	</div>
+</div>
+
+
+
+
+
+<script type="text/javascript">
+laydate.render({
+	    elem: '#birthday'
+	    ,calendar: true
+	});
+</script>
+</body>
+</html>
+

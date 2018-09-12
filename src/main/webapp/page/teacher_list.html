@@ -20,12 +20,13 @@
 <script src="assets/js/jquery.dataTables.min.js"></script>
 <script src="assets/js/jquery.dataTables.bootstrap.js"></script>
 <script src="assets/layer/layer.js" type="text/javascript" ></script>          
-<script src="assets/laydate/laydate.js" type="text/javascript"></script>
 <script type="text/javascript" src="js/myTime.js"></script>
+<script type="text/javascript" src="js/zlDictionary.js"></script>
 <script >
 var teacherTable;
 jQuery(function($) {
-	var CourseTypeList;
+	//从后台获取数据，可以保证数据的高度一致性，但实际情况会有加载顺序导致数据出不来的情况
+	/* var CourseTypeList;
 	var EducationTypeList;
 	var TeacherStatusList;
 	$.ajax({
@@ -66,7 +67,7 @@ jQuery(function($) {
 				layer.msg("初始化教师状态失败！",{time:1000,icon:2});
 			}
 		}
-	});
+	}); */
 	
 	
 	//加载列表信息
@@ -94,9 +95,9 @@ jQuery(function($) {
 		},{
 			"data" : "courseType",
 			"render": function (data, type, full, callback) {
-				for (var key in CourseTypeList){
-        			if(data == CourseTypeList[key]){
-        				return key;
+				for (var key in LessonTypeEnum){
+        			if(data == key){
+        				return LessonTypeEnum[key];
         			}
              	}
             }
@@ -109,9 +110,9 @@ jQuery(function($) {
 		},{
 			"data" : "educationType",
 			"render": function (data, type, full, callback) {
-				for (var key in EducationTypeList){
-        			if(data == EducationTypeList[key]){
-        				return key;
+				for (var key in EducationTypeEnum){
+        			if(data == key){
+        				return EducationTypeEnum[key];
         			}
              	}
             }
@@ -125,9 +126,9 @@ jQuery(function($) {
 		},{
 			"data" : "status",
 			"render": function (data, type, full, callback) {
-				for (var key in TeacherStatusList){
-        			if(data == TeacherStatusList[key]){
-        				return key;
+				for (var key in TeacherStatusEnum){
+        			if(data == key){
+        				return TeacherStatusEnum[key];
         			}
              	}
             }
@@ -140,8 +141,6 @@ jQuery(function($) {
              }
 		}]
 	});
-	
-	
 	
 	
 });

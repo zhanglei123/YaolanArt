@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -61,4 +62,10 @@ public class CoursePromotionController {
     }
     
   
+    @RequestMapping(value = "/delete")
+    @ResponseBody
+    public String delete(@RequestParam(value = "id",required = true) Integer id) throws Exception {
+    	coursePromotionService.deleteById(id);
+    	return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
+    }
 }

@@ -85,7 +85,6 @@ jQuery(function($) {
 		}, {
 			"data" : "linkmanSex",
 			"render": function (data, type, full, callback) {
-				 //类型：0导航菜单；1操作按钮。
                 switch (data) {
                     case 1: return "男"; break;
                     case 2: return "女"; break;
@@ -404,13 +403,13 @@ function clear_search(){
 		</ul>
 	</div>
 <script type="text/javascript">
-	laydate({
-	    elem: '#startTime',
-	    event: 'focus' 
+laydate.render({
+	    elem: '#startTime'
+	    ,calendar: true
 	});
-	laydate({
-	    elem: '#endTime',
-	    event: 'focus' 
+laydate.render({
+	    elem: '#endTime'
+	    ,calendar: true
 	});
 </script>
 </body>

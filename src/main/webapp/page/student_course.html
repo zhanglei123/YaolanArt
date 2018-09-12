@@ -1,0 +1,822 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="renderer" content="webkit|ie-comp|ie-stand" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+<link href="assets/css/codemirror.css" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/ace.min.css" />
+<link rel="stylesheet" href="font/css/font-awesome.min.css" />
+<style type="text/css">
+	/**********************账户管理*********************/
+	.Student_style .Student_Balance{
+		float:left; 
+		height:100px;  
+		border-radius:3px;
+		-moz-border-radius:3px; 
+		-webkit-border-radius:3px; 
+		background-color: #FF5959; 
+		padding:10px; 
+		color:#FFF; 
+		text-align:center;
+		 margin-right:10px;
+		 width:130px;
+	}
+	.Student_style .title_name{ position:absolute; top:-38px; font-size:18px; background-color:#ffffff; padding:5px 20px; left:-15px;}
+	.Student_style .Student_Balance h2{ margin:10px 0px;}
+	.Student_style .Student_info{ line-height:24px; float:left; position:absolute; left:160px;}
+	.Student_style .Student_info li{ height:30px; margin:5px 0px; float:left; width:250px; }
+	.Student_style .Student_info li .label_name{vertical-align: baseline}
+	.Student_style .infoborder{    
+		border: 1px solid #ddd;
+	    padding: 8px;
+    	height: 50px;
+	    line-height: 72px;
+	    margin-bottom: 20px;
+	 }
+	#recording{ width:100%;text-align:left; margin-top:15px;}
+	#recording .hd{ height:32px; line-height:32px; padding:0 10px 0 20px;   border-bottom:1px solid #ddd;  position:relative; }
+	#recording .hd ul{ float:left;  position:absolute; left:-1px; top:0px; height:32px;   }
+	#recording .hd ul li{ float:left; padding:0 25px; cursor:pointer;  font-size:14px;  }
+	#recording .hd ul li.on{ height:33px;  background:#fff; border:1px solid #ddd; border-bottom:2px solid #fff; color: #333333}
+	#recording .bd ul{ padding:15px;  zoom:1;  }
+	#recording .bd li{ height:24px; line-height:24px;  }
+	#recording .bd li .date{ float:right; color:#999; }
+</style>
+<!--[if lte IE 8]>
+  <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+<![endif]-->
+<script src="js/jquery.js"></script>
+<script src="js/jquery.SuperSlide.2.1.1.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/typeahead-bs2.min.js"></script>
+<script src="assets/js/jquery.dataTables.min.js"></script>
+<script src="assets/js/jquery.dataTables.bootstrap.js"></script>
+<script src="assets/layer/layer.js" type="text/javascript"></script>
+<script src="assets/laydate/laydate.js" type="text/javascript"></script>
+<script src="js/lrtk.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/myTime.js"></script>
+<script type="text/javascript" src="js/zlUtil.js"></script> 
+<script type="text/javascript">
+var student_id;
+var studentCourseTable;
+var studentLessonTable;
+var studentCouseUseTable;
+var trueName;
+jQuery(function($) {
+	//上一个页面传过来的学生ID
+	student_id= zlUrlParm.parm("id");
+	
+	//获取当前操作人（登录人）信息
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/user/getCurrentUser.do',
+		success : function(data) {
+			if (data.code == "00") {
+				//登录成功
+				trueName = data.user.trueName;
+				$("#userName").html(data.user.trueName);
+				$("#userId").val(data.user.id);
+			} else {
+				layer.msg("获取当前操作人数据失败！",{time:1000,icon:2});
+			}
+		}
+	});
+	//加载学生基本信息
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/student/getStudentById.do',
+		data : {id:student_id},
+		success : function(data) {
+			if(data.code == "00"){
+				//学生基本展示信息赋值
+				$("#student_name").html(data.object.name);
+				$("#student_create_time").html($.myTime.TimestampToTime2(data.object.createTime));
+				$("#student_school").html(data.object.school);
+				var status = data.object.status;
+				if(status == 1){
+					$("#student_status").html("正常");
+				}else{
+					$("#student_status").html("离开");
+				}
+				//刷课信息赋值
+				$("#couse_use_student_name").html(data.object.name);
+			}else{
+				layer.msg("初始化学生信息失败！",{time:1000,icon:2});
+			}
+		}
+	});
+	
+	//加载后台的课程卡次数据
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/courseCard/list.do',
+		success : function(data) {
+			if(data.code == "00"){
+				var list = data.list;
+				for (var i=0; i<list.length; i++){
+					$('#course_type').append("<option value=\""+list[i].id+"\">"+list[i].name+"</option>");
+			 	}
+			}else{
+				//layer.msg("初始化课程卡次数据失败！",{time:1000,icon:2});
+			}
+		}
+	});
+	//加载后台的可用的学生卡次数据
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/studentCourse/getAvailableCourse.do',
+		data : {studentId:student_id},
+		success : function(data) {
+			if(data.code == "00"){
+				//刷课信息赋值
+				$("#couse_use_couse_name").html(data.object.courseName);
+				$("#couse_use_couse_remain_num").html(data.object.remainNum);
+			}else{
+				//layer.msg("初始化课程卡次数据失败！",{time:1000,icon:2});
+			}
+		}
+	});
+	//加载后台的课程数据
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/lesson/list.do',
+		success : function(data) {
+			if(data.code == "00"){
+				var list = data.list;
+				for (var i=0; i<list.length; i++){
+					$('#lesson').append("<option value=\""+list[i].id+"\">"+list[i].name+"</option>");
+			 	}
+			}else{
+				layer.msg("初始化课程数据失败！",{time:1000,icon:2});
+			}
+		}
+	});
+	
+	//初始化课程卡次列表
+	studentCourseTable = $('#student_course_table').DataTable({
+	    "serverSide": true,
+	    "ordering": false,//排序
+	    "searching": false,//是否显示搜索
+	    "bFilter" : true, 
+		"ajax" :{
+			"type":"post",
+			"url":"/studentCourse/list.do",
+			"dataType":'json',
+			"data":{"student_id":student_id},
+			"dataSrc": "list",//这里是后台返回的数据对象
+		},
+		"createdRow": function (row, data, index) {
+               /* 设置表格中的内容居中 */
+               $('td', row).attr("class", "text-center");
+         },
+		"columns" : [ 
+			{
+				"data": "id", "bSortable": false
+			}, {
+				"data" : "studentName"
+			},{
+				"data" : "courseName"
+			}, {
+				"data" : "originalMoney"
+			},{
+				"data" : "originalNum"
+			},{
+				"data" : "averageMoney"
+			},{
+				"data" : "remainMoney"
+			},{
+				"data" : "remainNum"
+			},{
+				"data" : "status",
+				"render": function (data, type, full, callback) {
+					switch (data) {
+	                    case 1: return "<font color=\"green\" style=\"font-weight:bold;\">可用</font>"; break;
+	                    case 2: return "<font color=\"red\" style=\"font-weight:bold;\">冻结</font>"; break;
+	                }
+	            }
+			},{
+				"data" : "createTime",
+				"render": function (data, type, full, callback) {
+					return $.myTime.TimestampToTime(data);
+	            }
+			},{
+				"data" : null,
+				"render": function (data, type, row, callback) {
+					if(row.status == 2){
+						var html ="<a title='删除' onclick='student_course_del("+row.id+")' href='javascript:;'  class='btn btn-xs btn-info' >删除</a>";     
+				        return html;
+					}else{
+						return "<font color=\"green\" style=\"font-weight:bold;\">使用中</font>";
+					}
+	             }
+			}]
+	});
+
+	
+	//初始化课程卡次列表
+	studentLessonTable = $('#student_lesson_table').DataTable({
+	    "serverSide": true,
+	    "ordering": false,//排序
+	    "searching": false,//是否显示搜索
+	    "bAutoWidth": false,//自动宽度。
+	    "bFilter" : true, 
+		"ajax" :{
+			"type":"post",
+			"url":"/studentLesson/list.do",
+			"dataType":'json',
+			"data":{"student_id":student_id},
+			"dataSrc": "list",//这里是后台返回的数据对象
+		},
+		"createdRow": function (row, data, index) {
+               /* 设置表格中的内容居中 */
+               $('td', row).attr("class", "text-center");
+         },
+		"columns" : [ 
+			{
+				"data": "id", "bSortable": false
+			}, {
+				"data" : "lessonName"
+			}, {
+				"data" : "useCourseNum"
+			},{
+				"data" : "week"
+			},{
+				"data" : "startTime"
+			},{
+				"data" : "endTime"
+			},{
+				"data" : "createTime"
+			},{
+				"data" : null,
+				"render": function (data, type, row, callback) {
+					var html ="<a title='删除' onclick='student_lesson_del("+row.id+")' href='javascript:;'  class='btn btn-xs btn-info' >删除</a>";     
+			        return html;
+	             }
+			}]
+	});
+	
+	
+	//初始化课程刷卡列表
+	studentCouseUseTable = $('#student_course_use_table').DataTable({
+	    "serverSide": true,
+	    "ordering": false,//排序
+	    "searching": false,//是否显示搜索
+	    "bAutoWidth": false,//自动宽度。
+	    "bFilter" : true, 
+		"ajax" :{
+			"type":"post",
+			"url":"/studentConsumptionRecord/list.do",
+			"dataType":'json',
+			"data":{"student_id":student_id},
+			"dataSrc": "list",//这里是后台返回的数据对象
+		},
+		"createdRow": function (row, data, index) {
+               /* 设置表格中的内容居中 */
+               $('td', row).attr("class", "text-center");
+         },
+		"columns" : [ 
+			{
+				"data": "id", "bSortable": false
+			}, {
+				"data" : "courseName"
+			}, {
+				"data" : "lessonName"
+			},{
+				"data" : "num"
+			},{
+				"data" : "money"
+			},{
+				"data" : "courseRemainNum"
+			},{
+				"data" : "courseRemainMoney"
+			},{
+				"data" : "createTime"
+			},{
+				"data" : null,
+				"render": function (data, type, row, callback) {
+					var html ="<a title='删除'  href='javascript:;'  class='btn btn-xs btn-info' >删除</a>"+
+						"<a title='重新打印'  href='javascript:;' onclick='student_course_use_again_print("+row.id+")' class='btn btn-xs btn-info' >重新打印</a>";     
+			        return html;
+	             }
+			}]
+	});
+	
+	
+	$('table th input:checkbox').on('click',function() {
+		var that = this;
+		$(this).closest('table').find('tr > td:first-child input:checkbox').each(
+			function() {
+				this.checked = that.checked;
+				$(this).closest('tr').toggleClass('selected');
+			});
+	});
+});
+
+
+
+/*返回到学生列表页面*/
+function go_back(){
+	location.href="student_list.html";
+}
+
+/**添加课程卡次**/
+function student_course_add(index) {
+	layer.open({
+		type : 1,
+		title : '添加课程卡次',
+		maxmin : true,
+		shadeClose : true, //点击遮罩关闭层
+		area : [ '650px', '' ],
+		content : $('#courese_card_add'),
+		btn : [ '提交', '取消' ],
+		yes : function(index, layero) {
+			var courseId = $('#course_type option:selected').val();
+			//保存方法
+			$.ajax({
+				type : "post",
+				dataType : "json",
+				url : '/studentCourse/addByStudent.do',
+				data : {studentId:student_id,
+						courseId:courseId
+					},
+				success : function(data) {
+						if(data.code == "00"){
+							layer.msg("添加成功",{time:1000,icon:1});
+							studentCourseTable.draw(false);
+							$("#li_couse").click();
+							layer.close(index);
+						}else{
+							layer.msg(data.message,{time:1000,icon:2});
+						}
+				}
+			});
+		}
+	})
+}
+
+/*删除学生卡次*/
+function student_course_del(id) {
+	layer.confirm('确认要删除吗？',function(index){
+		$.ajax({
+			type : "post",
+			dataType : "json",
+			url : '/studentCourse/delete.do',
+			data : {id:id},
+			success : function(data) {
+					if(data.code == "00"){
+						layer.msg("删除成功",{time:1000,icon:1});
+						studentCourseTable.draw(false);
+					}else{
+						layer.msg(data.message,{time:1000,icon:2});
+					}
+			}
+		});
+	});
+}
+
+
+/**添加课程**/
+function student_lesson_add(index) {
+	layer.open({
+		type : 1,
+		title : '添加课程',
+		maxmin : true,
+		shadeClose : true, //点击遮罩关闭层
+		area : [ '650px', '' ],
+		offset: '70px',
+		content : $('#lesson_add'),
+		btn : [ '提交', '取消' ],
+		yes : function(index, layero) {
+			var lessonId = $('#lesson option:selected').val();
+			var week = $('#week option:selected').val();
+			//保存方法
+			$.ajax({
+				type : "post",
+				dataType : "json",
+				url : '/studentLesson/addByStudent.do',
+				data : {studentId:student_id,
+						lessonId:lessonId,
+						week:week,
+						useCourseNum:$('#useCourseNum').val(),
+						startTime:$('#lesson_start_time').val(),
+						endTime:$('#lesson_end_time').val()
+					},
+				success : function(data) {
+						if(data.code == "00"){
+							layer.msg("添加成功",{time:1000,icon:1});
+							studentLessonTable.ajax.reload().draw(false);
+							$("#li_lesson").click();
+							layer.close(index);
+						}else{
+							layer.msg(data.message,{time:1000,icon:2});
+						}
+				}
+			});
+		}
+	})
+}
+/*删除学生课程*/
+function student_lesson_del(id) {
+	layer.confirm('确认要删除吗？',function(index){
+		$.ajax({
+			type : "post",
+			dataType : "json",
+			url : '/studentLesson/delete.do',
+			data : {id:id},
+			success : function(data) {
+					if(data.code == "00"){
+						layer.msg("删除成功",{time:1000,icon:1});
+						studentLessonTable.draw(false)
+					}else{
+						layer.msg(data.message,{time:1000,icon:2});
+					}
+			}
+		});
+	});
+}
+
+/*刷课*/
+function student_couse_use(index) {
+	//学生课程信息，时间
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/studentLesson/getAvailableLesson.do',
+		data : {studentId:student_id},
+		success : function(data) {
+			if(data.code == "00"){
+				//刷课信息赋值
+				var list = data.list;
+				for (var i=0; i<list.length; i++){
+					$('#couse_use_lesson').append("<option value=\""+list[i].id+"\">"+list[i].lessonName+"</option>");
+			 	}
+			}else{
+				layer.msg("初始化学生课程信息数据失败！",{time:1000,icon:2});
+			}
+		}
+	});
+	
+	var couse_info = layer.open({
+		type : 1,
+		title : '刷课',
+		maxmin : true,
+		shadeClose : true, //点击遮罩关闭层
+		area : [ '650px', '' ],
+		offset: '70px',
+		content : $('#student_couse_use'),
+		btn : [ '提交并打印', '取消' ],
+		yes : function(index, layero) {
+			layer.close(couse_info);
+			
+			//选中的课程
+			var couse_use_lesson_id = $('#couse_use_lesson option:selected').val();
+			//先保存
+			$.ajax({
+				type : "post",
+				dataType : "json",
+				url : '/studentCourse/studentCouseUse.do',
+				data : {studentId:student_id,
+						strdentLessonId:couse_use_lesson_id	},
+				success : function(data) {
+					if (data.code == "00") {
+						debugger;
+						var rechargeId = data.object.id;
+						var time = data.object.createTime;
+						var num = data.object.num;
+						var studentName = data.object.studentName;
+						var courseName = data.object.courseName;
+						var courseRemainNum = data.object.courseRemainNum;
+						var lessonName = data.object.lessonName;
+						//需要学生信息
+						//学生课程卡次信息
+						//学生课程信息
+						layer.open({
+						    type: 2,
+						    title: '确认打印',
+					      	area: ['409px', '602px'],
+						    content: '/page/print_course.html?trueName='+trueName
+						    		+"&time="+time
+						    		+"&rechargeId="+rechargeId
+						    		+"&num="+num
+						    		+"&studentName="+studentName
+						    		+"&courseName="+courseName
+						    		+"&courseRemainNum="+courseRemainNum
+						    		+"&lessonName="+lessonName,
+						    btn : [ '打印完成'],
+						    yes : function(index, layero) {
+						    	layer.closeAll();
+						    	//页面切换到刷课记录，并更新数据
+						    	studentCouseUseTable.ajax.reload().draw(false);
+								$("#li_couse_use").click();
+						    }
+					    });
+						
+					} else {
+						layer.msg("刷课处理失败！",{time:1000,icon:2});
+					}
+				}
+			});
+			
+		}
+	})
+}
+
+/*重新打印*/
+function student_course_use_again_print(rechargeId) {
+	layer.open({
+	    type: 2,
+	    title: '确认打印',
+      	area: ['409px', '602px'],
+	    content: '/page/print_course.html?trueName='+trueName
+	    		+"&rechargeId="+rechargeId,
+	    btn : [ '打印完成'],
+	    yes : function(index, layero) {
+	    	layer.closeAll();
+	    	//页面切换到刷课记录，并更新数据
+	    	studentCouseUseTable.ajax.reload().draw(false);
+			$("#li_couse_use").click();
+	    }
+    });
+}
+</script>
+<title>账户详细</title>
+</head>
+
+<body>
+	<div class="margin clearfix">
+		<div class="Student_style">
+			<!--按钮信息-->
+		  	<div class="border clearfix">
+		      		<a onclick='go_back()' href="javascript:;" class="btn btn-info">返回</a>
+		        	<a onclick='student_course_add()' href='javascript:;' class="btn btn-warning Order_form"><i class="icon-plus"></i>新增卡次</a>
+		      		<a onclick='student_lesson_add()' href="javascript:;"  class="btn btn-danger"><i class="icon-trash"></i>新增课程</a>
+		        	<a onclick='student_couse_use()' href="javascript:;" class="btn btn-success">刷课</a>
+		 	</div>
+		 	
+		 	
+		 	<!--账户基本信息-->
+			<div class="search_style infoborder">
+				<ul class="search_content clearfix">
+					<li>
+						<label class="label_name">学生姓名：</label>
+						<span class="content" id="student_name">张博文</span>
+					</li>
+					<li>
+						<label class="label_name">用户注册时间：</label>
+						<span class="content" id="student_create_time">2016-3-12</span>
+					</li>
+					<li>
+						<label class="label_name">学生学校：</label>
+						<span class="content" id="student_school">中关村第一小学</span>
+					</li>
+					<li>
+						<label class="label_name">用户状态：</label>
+						<span class="content" id="student_status">正常</span>
+					</li>
+				</ul>
+			</div>
+		 	
+			<!--记录-->
+			<div class="recording_style">
+				<div id="recording">
+					<div class="hd">
+						<ul>
+							<li  id="li_couse">报卡记录</li>
+							<li  id="li_lesson">报课记录</li>
+							<li  id="li_couse_use">刷课记录</li>
+						</ul>
+					</div>
+					<div class="bd">
+						<ul class="">
+							<table class="table table-striped table-bordered table-hover" id="student_course_table">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>学生姓名</th>
+										<th>卡次名称</th>
+										<th>卡次总价</th>
+										<th>卡次总次数</th>
+										<th>卡次均价</th>
+										<th>剩余金额</th>
+										<th>剩余次数</th>
+										<th>状态</th>
+										<th>添加时间</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+
+
+								</tbody>
+							</table>
+						</ul>
+						<ul class="">
+							<table class="table table-striped table-bordered table-hover" id="student_lesson_table">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>课程名称</th>
+										<th>每次刷课次数</th>
+										<th>星期</th>
+										<th>开始时间</th>
+										<th>结束时间</th>
+										<th>添加时间</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</ul>
+						<ul class="">
+							<table class="table table-striped table-bordered table-hover" id="student_course_use_table">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>卡次名称</th>
+										<th>课程名称</th>
+										<th>刷课次数</th>
+										<th>刷课金额</th>
+										<th>剩余次数</th>
+										<th>剩余金额</th>
+										<th>时间</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</ul>
+					</div>
+				</div>
+				<script type="text/javascript">
+					jQuery("#recording").slide({
+						trigger : "click"
+					});
+				</script>
+			</div>
+		</div>
+	</div>
+	
+<!--添加课程卡次图层-->
+<div id="courese_card_add" style="display: none" class="course_card_style">
+	<div class="add_content" id="form-article-add">
+		<ul>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					<i>*</i>
+					卡次
+				</label>
+				<span class="formControls w_txt">
+					<select class="col-xs-7 col-sm-5" name="分类名称" id="course_type" style="margin-left:10px;">
+					</select>
+				</span>
+			</li>
+			
+		</ul>
+	</div>
+</div>	
+	
+<!--添加课程图层-->
+<div id="lesson_add" style="display: none" class="course_card_style">
+	<div class="add_content" id="form-article-add">
+		<ul>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					<i>*</i>
+					课程
+				</label>
+				<span class="formControls w_txt">
+					<select class="col-xs-7 col-sm-5" name="课程" id="lesson" style="margin-left:10px;">
+					</select>
+				</span>
+			</li>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					<i>*</i>
+					上课时间(周)
+				</label>
+				<span class="formControls w_txt">
+					<select class="col-xs-7 col-sm-5" name="上课时间(周)" id="week" style="margin-left:10px;">
+						<option value="1">星期一</option>
+						<option value="2">星期二</option>
+						<option value="3">星期三</option>
+						<option value="4">星期四</option>
+						<option value="5">星期五</option>
+						<option value="6">星期六</option>
+						<option value="7">星期日</option>
+					</select>
+				</span>
+			</li>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					<i>*</i>
+					开始时间
+				</label>
+				<span class="formControls w_txt">
+					<input class="inline laydate-icon" id="lesson_start_time" style="margin-left: 10px;width: 208px;" />
+				</span>
+			</li>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					<i>*</i>
+					结束时间
+				</label>
+				<span class="formControls w_txt">
+					<input class="inline laydate-icon" id="lesson_end_time" style="margin-left: 10px;width: 208px;" />
+				</span>
+			</li>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					<i>*</i>
+					刷课卡次次数
+				</label>
+				<span class="formControls w_txt">
+					<input name="刷课卡次次数" type="text" id="useCourseNum" class="col-xs-7 col-sm-5 " />
+				</span>
+			</li>
+		</ul>
+	</div>
+</div>	
+
+	
+<!--刷课图层-->
+<div id="student_couse_use" style="display: none" class="course_card_style">
+	<div class="add_content" id="form-article-add">
+		<input name="操作人ID" type="hidden" id="userId" class="col-xs-7 col-sm-5 " />
+		<ul>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					学生姓名
+				</label>
+				<span class="formControls w_txt" >
+					<span class="info" id="couse_use_student_name" style="margin-left:10px;"></span>
+				</span>
+			</li>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					卡次名称
+				</label>
+				<span class="formControls w_txt" >
+					<span class="info" id="couse_use_couse_name" style="margin-left:10px;"></span>
+				</span>
+			</li>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					剩余次数
+				</label>
+				<span class="formControls w_txt" >
+					<span class="info" id="couse_use_couse_remain_num" style="margin-left:10px;"></span>
+				</span>
+			</li>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					课程选择
+				</label>
+				<span class="formControls w_txt">
+					<select class="col-xs-7 col-sm-5" name="课程选择" id="couse_use_lesson" style="margin-left:10px;">
+					</select>
+				</span>
+			</li>
+			<li class="clearfix Mandatory">
+				<label class="label_name">
+					操作人
+				</label>
+				<span class="formControls w_txt">
+					<span class="info" id="userName" style="margin-left:10px;"></span>
+				</span>
+			</li>
+		</ul>
+	</div>
+</div>		
+
+
+
+<script type="text/javascript">
+	laydate.render({
+	  elem: '#lesson_start_time'
+	  ,type: 'time'
+	  ,min: '09:00:00'
+	  ,max: '20:00:00'
+	  ,btns: ['clear', 'confirm']
+	}); 
+	laydate.render({	
+    	elem: '#lesson_end_time'
+	    ,type: 'time'
+  	  	,min: '09:00:00'
+  	  	,max: '20:00:00'
+  	  	,btns: ['clear', 'confirm']
+	});
+</script>
+</body>
+</html>
+

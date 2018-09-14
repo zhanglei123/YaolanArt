@@ -6,7 +6,6 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +26,7 @@ import com.system.util.JsonUtil;
 @Controller
 @RequestMapping(value = "/studentConsumptionRecord")
 public class StudentConsumptionRecordController {
-	private Logger logger = Logger.getLogger(StudentConsumptionRecordController.class);
+	//private Logger logger = Logger.getLogger(StudentConsumptionRecordController.class);
     
 	@Resource(name = "studentConsumptionRecordServiceImpl")
     private StudentConsumptionRecordService studentConsumptionRecordService;
@@ -43,7 +42,7 @@ public class StudentConsumptionRecordController {
 	    	HttpServletRequest request) throws Exception {
     	  //总条数
         int totalCount = studentConsumptionRecordService.selectCount(null);
-        //过滤后条数
+        //查询条件
         int page = (start/length)+1;
         Wrapper<StudentConsumptionRecord> wrapper = new EntityWrapper<StudentConsumptionRecord>().orderBy("id", false);
         if (student_id != null) {
@@ -55,10 +54,12 @@ public class StudentConsumptionRecordController {
         if (endTime != null) {
         	wrapper = wrapper.lt("create_time", endTime);
         }
+        //过滤后条数
+        int filteredTotalCount = studentConsumptionRecordService.selectCount(wrapper);
         
         Page<StudentConsumptionRecord> selectPage = studentConsumptionRecordService.selectPage(new Page<StudentConsumptionRecord>(page,length), wrapper);
         List<StudentConsumptionRecord> list = selectPage.getRecords();
-        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
+        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,filteredTotalCount,list);
     }
 
  

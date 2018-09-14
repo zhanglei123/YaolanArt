@@ -46,6 +46,44 @@
 	.shop_reason .form-control{ width:568px; height:200px; resize:none; margin-left:0px}
 	
 	.teacher_detailed_style .teacher_content li i{color:#F33}
+	
+	.btn-upload {
+	  width: 106px;
+	  height: 32px;
+	  position: relative;
+	  margin-bottom: 10px;
+	}
+	.btn-upload a {
+	  display: block;
+	  width: 104px;
+	  line-height: 18px;
+	  padding: 6px 0;
+	  text-align: center;
+	  color: #4c4c4c;
+	  background: #fff;
+	  border: 1px solid #cecece;
+	}
+	.btn-upload input {
+	  width: 106px;
+	  height: 32px;
+	  position: absolute;
+	  left: 0px;
+	  top: 0px;
+	  z-index: 1;
+	  filter: alpha(opacity=0);
+	  -moz-opacity: 0;
+	  opacity: 0;
+	  cursor: pointer;
+	}
+	.icon-upload {
+	  display: inline-block;
+	  width: 17px;
+	  height: 17px;
+	  background: url(./images/icons.png) -78px 0 no-repeat;
+	  vertical-align: middle;
+	  margin-right: 5px;
+	  background-position: -144px -24px;
+	}
 </style>
 
 <!--[if lte IE 8]>
@@ -56,11 +94,8 @@
 <script src="assets/js/typeahead-bs2.min.js"></script>           	
 <script src="assets/layer/layer.js" type="text/javascript" ></script>          
 <script src="assets/laydate/laydate.js" type="text/javascript"></script>
-<script type="text/javascript" src="Widget/swfupload/swfupload.js"></script>
-<script type="text/javascript" src="Widget/swfupload/swfupload.queue.js"></script>
-<script type="text/javascript" src="Widget/swfupload/swfupload.speed.js"></script>
-<script type="text/javascript" src="Widget/swfupload/handlers.js"></script>
 <script type="text/javascript" src="js/zlDictionary.js"></script>
+<script type="text/javascript" src="js/jquery.uploadView.js"></script>
 <script type="text/javascript" >
 jQuery(function($) {
 	//初始化课程
@@ -90,6 +125,19 @@ jQuery(function($) {
 		}
 	});
 	
+	
+	$(".js_upFile").uploadView({
+		uploadBox: '.js_uploadBox',//设置上传框容器
+		showBox : '.resizebox',//设置显示预览图片的容器
+		width : 105, //预览图片的宽度，单位px
+		height : 140, //预览图片的高度，单位px
+		allowType: ["gif", "jpeg", "jpg", "bmp", "png"], //允许上传图片的类型
+		maxSize :5, //允许上传图片的最大尺寸，单位M
+		success:function(e){
+			$(".js_uploadText").text('更改');
+		}
+	});
+	
 });
 
 //保存信息
@@ -114,7 +162,7 @@ function teacher_save(file) {
 	}
 	
 	//图片
-	var imagePath=$("#imagePath").val();
+	var imagePath = $("#showImage").children("img").attr("src");
 	if(imagePath.trim() == "" || imagePath == undefined || imagePath == null){
 		layer.alert("请上传一张图片！", {
 			title : '提示框',
@@ -159,109 +207,6 @@ function teacher_save(file) {
 	
 }
 
-
-
-function updateProgress(file) {
-	$('.progress-box .progress-bar > div').css('width',
-			parseInt(file.percentUploaded) + '%');
-	$('.progress-box .progress-num > b').html(
-			SWFUpload.speed.formatPercent(file.percentUploaded));
-	if (parseInt(file.percentUploaded) == 100) {
-		// 如果上传完成了
-		$('.progress-box').hide();
-	}
-}
-
-function initProgress() {
-	$('.progress-box').show();
-	$('.progress-box .progress-bar > div').css('width', '0%');
-	$('.progress-box .progress-num > b').html('0%');
-}
-
-function successAction(imagePath) {
-	//赋值
-	$('#imagePath').val(imagePath);
-	
-	var up_path = imagePath;
-	var up_width = "120";
-	var up_height = "177";
-	var _up_width, _up_height;
-	if (up_width > 120) {
-		_up_width = 120;
-		_up_height = _up_width * up_height / up_width;
-	}
-	$(".logobox .resizebox").css({
-		width : _up_width,
-		height : _up_height
-	});
-	$(".logobox .resizebox > img").attr('src', up_path);
-	$(".logobox .resizebox > img").attr('width', _up_width);
-	$(".logobox .resizebox > img").attr('height', _up_height);
-}
-
-var swfImageUpload;
-$(document).ready(
-	function() {
-		var settings = {
-			flash_url : "Widget/swfupload/swfupload.swf",
-			flash9_url : "Widget/swfupload/swfupload_fp9.swf",
-			upload_url : "/teacher/uploadPersonImage.do",// 接受上传的地址
-			file_post_name : "filedata",
-			//post_params: {"contentId" :$("#msgContentId").val()},
-			file_size_limit : "5MB",// 文件大小限制
-			file_types : "*.jpg;*.png;*.jpeg;",// 限制文件类型
-			file_types_description : "图片",// 说明，自己定义
-			file_upload_limit : 100,
-			file_queue_limit : 0,
-			custom_settings : {},
-			debug : false,
-			// Button settings
-			button_image_url : "Widget/swfupload/upload-btn.png",
-			button_width : "105",
-			button_height : "30 ",
-			button_placeholder_id : 'uploadBtnHolder',
-			button_window_mode : SWFUpload.WINDOW_MODE.TRANSPARENT,
-			button_cursor : SWFUpload.CURSOR.HAND,
-			button_action : SWFUpload.BUTTON_ACTION.SELECT_FILE,
-
-			moving_average_history_size : 40,
-
-			// The event handler functions are defined in handlers.js
-			swfupload_preload_handler : preLoad,
-			swfupload_load_failed_handler : loadFailed,
-			file_queued_handler : fileQueued,
-			file_dialog_complete_handler : fileDialogComplete,
-			upload_start_handler : function(file) {
-				initProgress();
-				updateProgress(file);
-			},
-			upload_progress_handler : function(file, bytesComplete,
-					bytesTotal) {
-				updateProgress(file);
-			},
-			upload_success_handler : function(file, data, response) {
-				// 上传成功后处理函数
-				var fileInfo = JSON.parse(data);;
-				if(fileInfo.code == "00"){
-					successAction(fileInfo.message);
-				}else{
-					layer.msg("上传失败",{time:1000,icon:2});
-				}
-			},
-			upload_error_handler : function(file, errorCode, message) {
-				alert('上传发生了错误！');
-			},
-			file_queue_error_handler : function(file, errorCode,
-					message) {
-				if (errorCode == -110) {
-					alert('您选择的文件太大了。');
-				}
-			}
-		};
-		swfImageUpload = new SWFUpload(settings);
-});
-
-
 //通过
 var index = parent.layer.getFrameIndex(window.name);
 parent.layer.iframeAuto(index);
@@ -274,10 +219,6 @@ function cancel_save(){
 	parent.$('.Current_page').css({"color":"#333333"});
 }
 
-
-
-
-
 </script>
 <title>教师信息</title>
 </head>
@@ -287,30 +228,19 @@ function cancel_save(){
  <div class="teacher_detailed_style clearfix">
  <em class="type"></em>
   	<div class="teacher_logo">
-		<div class="demo l_f">
+		<div class="demo l_f js_uploadBox">
 			<div class="logobox">
-				<div class="resizebox">
-					<img src="images/image.png" width="100px" alt="" height="140px" />
+				<div class="resizebox js_showBox" id="showImage">
+					<img src="images/image.png"  width="105px" alt="" height="140px" />
 				</div>
 			</div>
-			<div class="logoupload">
-				<div class="btnbox">
-					<a id="uploadBtnHolder" class="uploadbtn" href="javascript:;">上传替换</a>
-					<input type="hidden" id="imagePath"/>
-				</div>
-				<div style="clear: both; height: 0; overflow: hidden;"></div>
-				<div class="progress-box" style="display: none;">
-					<div class="progress-num">
-						上传进度：
-						<b>0%</b>
-					</div>
-					<div class="progress-bar">
-						<div style="width: 0%;" class="bar-line"></div>
-					</div>
-				</div>
-			</div>
+			<div class="btn-upload">
+		      <a href="javascript:void(0);"><i class="icon-upload-alt"></i><span class="js_uploadText">上传</span>图片</a>
+		      <input class="js_upFile" id = "imagePath" type="file" name="cover"/>
+		    </div>
 		</div>
 	</div>
+	
   	<ul class="teacher_content clearfix">
 	    <li class="shop_name"><label class="label_name"><i>* </i>教师名称：</label><input name="教师名称" type="text" id="name" value=""/></li>
 	    <li><label class="label_name"><i>* </i>性&nbsp;&nbsp;&nbsp;&nbsp;别：</label>

@@ -24,11 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.system.base.ResponseCode;
-import com.system.enums.LessonTypeEnum;
 import com.system.enums.EducationTypeEnum;
+import com.system.enums.LessonTypeEnum;
 import com.system.enums.TeacherStatusEnum;
 import com.system.po.Teacher;
 import com.system.service.TeacherService;
+import com.system.util.CommonUtil;
 import com.system.util.JsonUtil;
 
 import net.sf.json.JSONObject;
@@ -56,9 +57,27 @@ public class TeacherController {
         return JsonUtil.toResponseObj(ResponseCode.SUCCESS,teacher);
     }
     
-    @RequestMapping(value = "/add")
+	@RequestMapping(value = "/add")
     @ResponseBody
-    public String add(@ModelAttribute Teacher teacher) throws Exception {
+    public String add(@ModelAttribute Teacher teacher,HttpServletRequest request) throws Exception {
+    	//教师图片为Base64格式
+		String uploadDir = request.getServletContext().getRealPath("/upload");// 获取上传目录的路径
+		// 获得目录，如果目录不存在，则创建目录
+		File dirPath = new File(uploadDir);
+		if (!dirPath.exists()) {
+			dirPath.mkdirs();
+		}
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        String newFileName = teacher.getName()+"_"+sdf.format(new Date());
+		String suffix = CommonUtil.getBASE64FileSuffix(teacher.getImagePath());
+		
+		String fileNameFull = uploadDir + "\\" + newFileName+suffix;
+		//保存文件
+		CommonUtil.saveBASE64File(teacher.getImagePath().split(",")[1], fileNameFull);
+
+        String serverImagePath = "/upload/"+newFileName+suffix;
+        teacher.setImagePath(serverImagePath);
     	teacher.setCreateTime(new Date());
     	teacherService.insert(teacher);
     	return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
@@ -66,9 +85,32 @@ public class TeacherController {
     
     @RequestMapping(value = "/update")
     @ResponseBody
-    public String update(Teacher card) throws Exception {
-    	card.setUpdateTime(new Date());
-    	teacherService.insertOrUpdate(card);
+    public String update(Teacher teacher,HttpServletRequest request) throws Exception {
+    	//需要判断图片是否更改过
+    	Teacher tea = teacherService.selectById(teacher.getId());
+    	if (!teacher.getImagePath().equals(tea.getImagePath())) {
+    		//教师图片为Base64格式
+    		String uploadDir = request.getServletContext().getRealPath("/upload");// 获取上传目录的路径
+    		// 获得目录，如果目录不存在，则创建目录
+    		File dirPath = new File(uploadDir);
+    		if (!dirPath.exists()) {
+    			dirPath.mkdirs();
+    		}
+
+    		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            String newFileName = teacher.getName()+"_"+sdf.format(new Date());
+    		String suffix = CommonUtil.getBASE64FileSuffix(teacher.getImagePath());
+    		
+    		String fileNameFull = uploadDir + "\\" + newFileName+suffix;
+    		//保存文件
+    		CommonUtil.saveBASE64File(teacher.getImagePath().split(",")[1], fileNameFull);
+
+            String serverImagePath = "/upload/"+newFileName+suffix;
+            teacher.setImagePath(serverImagePath);
+		}
+    	
+    	teacher.setUpdateTime(new Date());
+    	teacherService.insertOrUpdate(teacher);
         return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
     }
     

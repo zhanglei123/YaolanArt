@@ -13,14 +13,13 @@ import com.system.po.User;
 
 
 public class JsonUtil {
-	public static final Map<String, Object> resMap = new HashMap<String, Object>();
 	/**
 	 * @description:使用fastjson处理
 	 * @author: lei.zhang2@100credit.com
 	 * @time: 2018年5月24日 下午5:58:48
 	 */
 	public static String toResponseMsg(ResponseCode code){
-		resMap.clear();
+		Map<String, Object> resMap = new HashMap<String, Object>();
 		resMap.put("code", code.getCode());
 		resMap.put("message", code.getMsg());
 		return JSON.toJSONString(resMap);
@@ -32,7 +31,7 @@ public class JsonUtil {
 	 * @time: 2018年5月24日 下午5:58:48
 	 */
 	public static String toResponseObj(ResponseCode code,Object object){
-		resMap.clear();
+		Map<String, Object> resMap = new HashMap<String, Object>();
 		resMap.put("code", code.getCode());
 		resMap.put("message", code.getMsg());
 		resMap.put("object", object);
@@ -44,7 +43,7 @@ public class JsonUtil {
 	 * @time: 2018年5月24日 下午5:58:48
 	 */
 	public static String toResponseMsg(ResponseCode code,String msg){
-		resMap.clear();
+		Map<String, Object> resMap = new HashMap<String, Object>();
 		resMap.put("code", code.getCode());
 		resMap.put("message", msg);
 		return JSON.toJSONString(resMap);
@@ -56,7 +55,7 @@ public class JsonUtil {
 	 * @time: 2018年5月24日 下午5:58:48
 	 */
 	public static String toResponseMsg(ResponseCode code,User user){
-		resMap.clear();
+		Map<String, Object> resMap = new HashMap<String, Object>();
 		resMap.put("code", code.getCode());
 		resMap.put("message", code.getMsg());
 		resMap.put("user", user);
@@ -76,7 +75,7 @@ public class JsonUtil {
 	 * @time: 2018年5月24日 下午5:58:48
 	 */
 	public static String toDataTableServerMsg(ResponseCode code,Integer draw,Integer totalNum,Integer filteredNum, List<?> list){
-		resMap.clear();
+		Map<String, Object> resMap = new HashMap<String, Object>();
 		resMap.put("code", code.getCode());
 		resMap.put("message", code.getMsg());
 		resMap.put("draw", draw);
@@ -99,7 +98,7 @@ public class JsonUtil {
 	 * @time: 2018年5月24日 下午5:58:48
 	 */
 	public static String toDataTableFrontMsg(ResponseCode code,List<?> list){
-		resMap.clear();
+		Map<String, Object> resMap = new HashMap<String, Object>();
 		resMap.put("code", code.getCode());
 		resMap.put("message", code.getMsg());
 		resMap.put("list", list);

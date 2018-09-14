@@ -1,5 +1,7 @@
 package com.system.task;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
@@ -30,7 +32,7 @@ public class IpCheckTask {
 	
 	
 	@Async
-	@Scheduled(cron = "0 0 1 * * ?")
+	@Scheduled(cron = "0 57 19 * * ?")
 	public void taskExecutor(){
 		logger.info("检查公网IP定时任务启动");
 		String networkIP = IpUtil.getPublicNetworkIP();
@@ -48,6 +50,7 @@ public class IpCheckTask {
 				MailUtil.alarm("公网ip变更", "变更前ip为："+config.getConfigValue()+"变更后为："+networkIP);
 				//更新数据
 				config.setConfigValue(networkIP);
+				config.setUpdateTime(new Date());
 				configService.updateById(config);
 			}
 		}

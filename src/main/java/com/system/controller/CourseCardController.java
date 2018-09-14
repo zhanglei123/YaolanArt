@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,12 +25,14 @@ import com.system.util.JsonUtil;
 @Controller
 @RequestMapping("/courseCard")
 public class CourseCardController {
+	private Logger logger = Logger.getLogger(StudentController.class);
 	@Resource
     private CourseCardService courseCardService;
 
     @RequestMapping(value = "/list")
     @ResponseBody
     public String list(HttpServletRequest request) throws Exception {
+    	logger.info("=============开始查询课程卡次列表=============");
         Wrapper<CourseCard> wrapper = new EntityWrapper<CourseCard>().orderBy("id", false);
         List<CourseCard> list = courseCardService.selectList(wrapper);
         return JsonUtil.toDataTableFrontMsg(ResponseCode.SUCCESS,list);

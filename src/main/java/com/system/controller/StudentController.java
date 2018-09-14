@@ -31,6 +31,7 @@ import com.system.po.Student;
 import com.system.po.StudentLinkmanInfo;
 import com.system.service.StudentLinkmanInfoService;
 import com.system.service.StudentService;
+import com.system.util.CommonUtil;
 import com.system.util.JsonUtil;
 
 import net.sf.json.JSONObject;
@@ -53,9 +54,9 @@ public class StudentController {
 	    	@RequestParam(value = "startTime",required = false) Date startTime,
 	    	@RequestParam(value = "endTime",required = false) Date endTime,
 	    	HttpServletRequest request) throws Exception {
-    	  //总条数
+    	 //总条数
         int totalCount = studentService.selectCount(null);
-        //过滤后条数
+        //查询条件
         int page = (start/length)+1;
         Wrapper<Student> wrapper = new EntityWrapper<Student>().orderBy("id", false);
         if (!StringUtils.isEmpty(student_name_s)) {
@@ -67,11 +68,12 @@ public class StudentController {
         if (endTime != null) {
         	wrapper = wrapper.lt("create_time", endTime);
         }
-       
+        //过滤后条数
+        int filteredTotalCount = studentService.selectCount(wrapper);
         
         Page<Student> selectPage = studentService.selectPage(new Page<Student>(page,length), wrapper);
         List<Student> list = selectPage.getRecords();
-        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
+        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,filteredTotalCount,list);
     }
 
     /**
@@ -106,6 +108,25 @@ public class StudentController {
     @ResponseBody
     public String add(@ModelAttribute Student student,@ModelAttribute StudentLinkmanInfo studentLinkmanInfo,
     		HttpServletRequest request) throws Exception {
+    	//学生图片为Base64格式
+		String uploadDir = request.getServletContext().getRealPath("/upload");// 获取上传目录的路径
+		// 获得目录，如果目录不存在，则创建目录
+		File dirPath = new File(uploadDir);
+		if (!dirPath.exists()) {
+			dirPath.mkdirs();
+		}
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        String newFileName = student.getName()+"_"+sdf.format(new Date());
+		String suffix = CommonUtil.getBASE64FileSuffix(student.getImagePath());
+		
+		String fileNameFull = uploadDir + "\\" + newFileName+suffix;
+		//保存文件
+		CommonUtil.saveBASE64File(student.getImagePath().split(",")[1], fileNameFull);
+
+        String serverImagePath = "/upload/"+newFileName+suffix;
+        student.setImagePath(serverImagePath);
+    	
     	student.setCreateTime(new Date());
     	student.setUpdateTime(new Date());
     	student.setStatus(1);
@@ -121,7 +142,30 @@ public class StudentController {
     
     @RequestMapping(value = "/update")
     @ResponseBody
-    public String update(Student student) throws Exception {
+    public String update(Student student,HttpServletRequest request) throws Exception {
+    	//需要判断图片是否更改过
+    	Student sea = studentService.selectById(student.getId());
+    	if (!student.getImagePath().equals(sea.getImagePath())) {
+    		//教师图片为Base64格式
+    		String uploadDir = request.getServletContext().getRealPath("/upload");// 获取上传目录的路径
+    		// 获得目录，如果目录不存在，则创建目录
+    		File dirPath = new File(uploadDir);
+    		if (!dirPath.exists()) {
+    			dirPath.mkdirs();
+    		}
+
+    		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            String newFileName = student.getName()+"_"+sdf.format(new Date());
+    		String suffix = CommonUtil.getBASE64FileSuffix(student.getImagePath());
+    		
+    		String fileNameFull = uploadDir + "\\" + newFileName+suffix;
+    		//保存文件
+    		CommonUtil.saveBASE64File(student.getImagePath().split(",")[1], fileNameFull);
+
+            String serverImagePath = "/upload/"+newFileName+suffix;
+            student.setImagePath(serverImagePath);
+		}
+    	
     	student.setUpdateTime(new Date());
     	studentService.insertOrUpdate(student);
         return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);

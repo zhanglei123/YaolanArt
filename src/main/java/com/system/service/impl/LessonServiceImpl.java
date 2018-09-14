@@ -1,6 +1,5 @@
 package com.system.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -10,9 +9,6 @@ import com.system.service.LessonService;
 
 @Service
 public class LessonServiceImpl extends ServiceImpl<LessonMapper, Lesson> implements LessonService {
-
-    @Autowired
-    private LessonMapper courseMapper;
     
    
 }

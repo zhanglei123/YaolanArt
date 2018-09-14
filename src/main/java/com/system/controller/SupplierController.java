@@ -50,9 +50,12 @@ public class SupplierController {
         	wrapper = wrapper.lt("create_time", endTime);
         }
         
+        //过滤后条数
+        int filteredTotalCount = supplierService.selectCount(wrapper);
+        
         Page<Supplier> selectPage = supplierService.selectPage(new Page<Supplier>(page,length), wrapper);
         List<Supplier> list = selectPage.getRecords();
-        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
+        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,filteredTotalCount,list);
     }
     
     

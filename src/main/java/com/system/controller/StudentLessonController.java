@@ -6,7 +6,6 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +33,7 @@ import com.system.util.JsonUtil;
 @Controller
 @RequestMapping(value = "/studentLesson")
 public class StudentLessonController {
-	private Logger logger = Logger.getLogger(StudentLessonController.class);
+	//private Logger logger = Logger.getLogger(StudentLessonController.class);
   
 	@Resource
     private StudentLessonService studentLessonService;
@@ -56,24 +55,27 @@ public class StudentLessonController {
 	    	@RequestParam(value = "startTime",required = false) Date startTime,
 	    	@RequestParam(value = "endTime",required = false) Date endTime,
 	    	HttpServletRequest request) throws Exception {
-    	  //总条数
-        int totalCount = studentLessonService.selectCount(null);
-        //过滤后条数
-        int page = (start/length)+1;
-        Wrapper<StudentLesson> wrapper = new EntityWrapper<StudentLesson>().orderBy("id", false);
-        if (student_id != null) {
-        	wrapper = wrapper.eq("student_id", student_id);
-		}
-        if (startTime != null) {
-        	wrapper = wrapper.gt("create_time", startTime);
-		}
-        if (endTime != null) {
-        	wrapper = wrapper.lt("create_time", endTime);
-        }
-       
-        Page<StudentLesson> selectPage = studentLessonService.selectPage(new Page<StudentLesson>(page,length), wrapper);
-        List<StudentLesson> list = selectPage.getRecords();
-        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
+    		//总条数
+	        int totalCount = studentLessonService.selectCount(null);
+	        //过滤后条数
+	        int page = (start/length)+1;
+	        Wrapper<StudentLesson> wrapper = new EntityWrapper<StudentLesson>().orderBy("id", false);
+	        if (student_id != null) {
+	        	wrapper = wrapper.eq("student_id", student_id);
+			}
+	        if (startTime != null) {
+	        	wrapper = wrapper.gt("create_time", startTime);
+			}
+	        if (endTime != null) {
+	        	wrapper = wrapper.lt("create_time", endTime);
+	        }
+	       
+	        //过滤后条数
+	        int filteredTotalCount = studentLessonService.selectCount(wrapper);
+	        
+	        Page<StudentLesson> selectPage = studentLessonService.selectPage(new Page<StudentLesson>(page,length), wrapper);
+	        List<StudentLesson> list = selectPage.getRecords();
+	        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,filteredTotalCount,list);
     }
     
     /**

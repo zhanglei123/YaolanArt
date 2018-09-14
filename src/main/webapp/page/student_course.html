@@ -128,22 +128,7 @@ jQuery(function($) {
 			}
 		}
 	});
-	//加载后台的可用的学生卡次数据
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : '/studentCourse/getAvailableCourse.do',
-		data : {studentId:student_id},
-		success : function(data) {
-			if(data.code == "00"){
-				//刷课信息赋值
-				$("#couse_use_couse_name").html(data.object.courseName);
-				$("#couse_use_couse_remain_num").html(data.object.remainNum);
-			}else{
-				//layer.msg("初始化课程卡次数据失败！",{time:1000,icon:2});
-			}
-		}
-	});
+	
 	//加载后台的课程数据
 	$.ajax({
 		type : "post",
@@ -160,7 +145,24 @@ jQuery(function($) {
 			}
 		}
 	});
-	
+	//加载后台的可用的学生卡次数据
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/studentCourse/getAvailableCourse.do',
+		data : {studentId:student_id},
+		success : function(data) {
+			if(data.code == "00"){
+				//刷课信息赋值
+				if(data.object){
+					$("#couse_use_couse_name").html(data.object.courseName);
+					$("#couse_use_couse_remain_num").html(data.object.remainNum);
+				}
+			}else{
+				//layer.msg("初始化课程卡次数据失败！",{time:1000,icon:2});
+			}
+		}
+	});
 	//初始化课程卡次列表
 	studentCourseTable = $('#student_course_table').DataTable({
 	    "serverSide": true,
@@ -443,9 +445,35 @@ function student_lesson_del(id) {
 		});
 	});
 }
-
-/*刷课*/
-function student_couse_use(index) {
+/*刷课第一步----先校验是否有可用卡次*/
+function student_couse_use_check_couse() {
+	//如果没有初始化进来就重新获取一次
+	var couse_use_couse_name = $("#couse_use_couse_name").html();
+	if(couse_use_couse_name.trim() == "" || couse_use_couse_name == undefined || couse_use_couse_name == null){
+		$.ajax({
+			type : "post",
+			dataType : "json",
+			url : '/studentCourse/getAvailableCourse.do',
+			data : {studentId:student_id},
+			success : function(data) {
+				if(data.code == "00"){
+					//刷课信息赋值
+					if(data.object){
+						$("#couse_use_couse_name").html(data.object.courseName);
+						$("#couse_use_couse_remain_num").html(data.object.remainNum);
+					}
+					student_couse_use_check_lesson();
+				}else{
+					layer.msg("该学生没有可用卡次，请先购买卡次！",{time:1000,icon:2});
+				}
+			}
+		});
+	}else{
+		student_couse_use_check_lesson();
+	}
+}
+/*刷课第二步----先校验是否有可用课程*/
+function student_couse_use_check_lesson() {
 	//学生课程信息，时间
 	$.ajax({
 		type : "post",
@@ -456,15 +484,22 @@ function student_couse_use(index) {
 			if(data.code == "00"){
 				//刷课信息赋值
 				var list = data.list;
-				for (var i=0; i<list.length; i++){
-					$('#couse_use_lesson').append("<option value=\""+list[i].id+"\">"+list[i].lessonName+"</option>");
-			 	}
+				if(list.length > 0){
+					for (var i=0; i<list.length; i++){
+						$('#couse_use_lesson').append("<option value=\""+list[i].id+"\">"+list[i].lessonName+"</option>");
+				 	}
+					student_couse_use();
+				}else{
+					layer.msg("该学生没有课程信息，请先关联课程！",{time:1000,icon:2});
+				}
 			}else{
-				layer.msg("初始化学生课程信息数据失败！",{time:1000,icon:2});
+				layer.msg("该学生没有课程信息，请先关联课程！",{time:1000,icon:2});
 			}
 		}
 	});
-	
+}
+/*刷课第三步----执行刷卡*/
+function student_couse_use() {
 	var couse_info = layer.open({
 		type : 1,
 		title : '刷课',
@@ -488,7 +523,6 @@ function student_couse_use(index) {
 						strdentLessonId:couse_use_lesson_id	},
 				success : function(data) {
 					if (data.code == "00") {
-						debugger;
 						var rechargeId = data.object.id;
 						var time = data.object.createTime;
 						var num = data.object.num;
@@ -559,7 +593,7 @@ function student_course_use_again_print(rechargeId) {
 		      		<a onclick='go_back()' href="javascript:;" class="btn btn-info">返回</a>
 		        	<a onclick='student_course_add()' href='javascript:;' class="btn btn-warning Order_form"><i class="icon-plus"></i>新增卡次</a>
 		      		<a onclick='student_lesson_add()' href="javascript:;"  class="btn btn-danger"><i class="icon-trash"></i>新增课程</a>
-		        	<a onclick='student_couse_use()' href="javascript:;" class="btn btn-success">刷课</a>
+		        	<a onclick='student_couse_use_check_couse()' href="javascript:;" class="btn btn-success">刷课</a>
 		 	</div>
 		 	
 		 	

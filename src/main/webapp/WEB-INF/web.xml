@@ -9,7 +9,6 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:spring/spring.xml</param-value>
 	</context-param>
-	
  	<!-- 应用启动时,该监听器被执行,它会读取Spring相关配置文件,其默认会到WEB-INF中查找applicationContext.xml -->  
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

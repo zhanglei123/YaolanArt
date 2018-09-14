@@ -65,7 +65,7 @@ public class StudentCourseController {
 	    	HttpServletRequest request) throws Exception {
     	  //总条数
         int totalCount = studentCourseService.selectCount(null);
-        //过滤后条数
+        //查询条件
         int page = (start/length)+1;
         Wrapper<StudentCourse> wrapper = new EntityWrapper<StudentCourse>().orderBy("id", false);
         if (student_id != null) {
@@ -77,11 +77,12 @@ public class StudentCourseController {
         if (endTime != null) {
         	wrapper = wrapper.lt("create_time", endTime);
         }
-       
+        //过滤后条数
+        int filteredTotalCount = studentCourseService.selectCount(wrapper);
         
         Page<StudentCourse> selectPage = studentCourseService.selectPage(new Page<StudentCourse>(page,length), wrapper);
         List<StudentCourse> list = selectPage.getRecords();
-        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,totalCount,list);
+        return JsonUtil.toDataTableServerMsg(ResponseCode.SUCCESS, draw,totalCount,filteredTotalCount,list);
     }
     
     @RequestMapping(value = "getStudentCourseById")

@@ -44,7 +44,7 @@ public class LoginLogController {
         //总条数
         int totalCount = loginLogService.selectCount(new EntityWrapper<LoginLog>()
 				.eq("user_id", currentUser.getId()));
-        //过滤后条数
+        //分页条数
         int page = start/length;
         Page<LoginLog> selectPage = loginLogService.selectPage(new Page<LoginLog>(page+1,length), new EntityWrapper<LoginLog>()
 				.eq("user_id", currentUser.getId())

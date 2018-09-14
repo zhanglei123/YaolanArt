@@ -35,14 +35,7 @@
 				// 5.0 版本之后，要实现二选一的验证效果，datatype 的名称 不 需要以 "option_" 开头;	
 			}
 		},
-		usePlugin:{
-			swfupload:{},
-			datepicker:{},
-			passwordstrength:{},
-			jqtransform:{
-				selector:"select,input"
-			}
-		},
+		
 		beforeCheck:function(curform){
 			//在表单提交执行验证之前执行的函数，curform参数是当前表单对象。
 			//这里明确return false的话将不会继续执行验证操作;	
@@ -328,124 +321,6 @@
 			Validform.util.usePlugin.call(curform,usePlugin,tiptype,tipSweep,addRule);
 		},
 		
-		usePlugin:function(plugin,tiptype,tipSweep,addRule){
-			/*
-				plugin:settings.usePlugin;
-				tiptype:settings.tiptype;
-				tipSweep:settings.tipSweep;
-				addRule:是否在addRule时触发;
-			*/
-
-			var curform=this,
-				plugin=plugin || {};
-			//swfupload;
-			if(curform.find("input[plugin='swfupload']").length && typeof(swfuploadhandler) != "undefined"){
-				
-				var custom={
-						custom_settings:{
-							form:curform,
-							showmsg:function(msg,type,obj){
-								Validform.util.showmsg.call(curform,msg,tiptype,{obj:curform.find("input[plugin='swfupload']"),type:type,sweep:tipSweep});	
-							}	
-						}	
-					};
-
-				custom=$.extend(true,{},plugin.swfupload,custom);
-				
-				curform.find("input[plugin='swfupload']").each(function(n){
-					if(this.validform_inited=="inited"){return true;}
-					this.validform_inited="inited";
-					
-					$(this).val("");
-					swfuploadhandler.init(custom,n);
-				});
-				
-			}
-			
-			//datepicker;
-			if(curform.find("input[plugin='datepicker']").length && $.fn.datePicker){
-				plugin.datepicker=plugin.datepicker || {};
-				
-				if(plugin.datepicker.format){
-					Date.format=plugin.datepicker.format; 
-					delete plugin.datepicker.format;
-				}
-				if(plugin.datepicker.firstDayOfWeek){
-					Date.firstDayOfWeek=plugin.datepicker.firstDayOfWeek; 
-					delete plugin.datepicker.firstDayOfWeek;
-				}
-
-				curform.find("input[plugin='datepicker']").each(function(n){
-					if(this.validform_inited=="inited"){return true;}
-					this.validform_inited="inited";
-					
-					plugin.datepicker.callback && $(this).bind("dateSelected",function(){
-						var d=new Date( $.event._dpCache[this._dpId].getSelected()[0] ).asString(Date.format);
-						plugin.datepicker.callback(d,this);
-					});
-					$(this).datePicker(plugin.datepicker);
-				});
-			}
-			
-			//passwordstrength;
-			if(curform.find("input[plugin*='passwordStrength']").length && $.fn.passwordStrength){
-				plugin.passwordstrength=plugin.passwordstrength || {};
-				plugin.passwordstrength.showmsg=function(obj,msg,type){
-					Validform.util.showmsg.call(curform,msg,tiptype,{obj:obj,type:type,sweep:tipSweep});
-				};
-				
-				curform.find("input[plugin='passwordStrength']").each(function(n){
-					if(this.validform_inited=="inited"){return true;}
-					this.validform_inited="inited";
-					
-					$(this).passwordStrength(plugin.passwordstrength);
-				});
-			}
-			
-			//jqtransform;
-			if(addRule!="addRule" && plugin.jqtransform && $.fn.jqTransSelect){
-				if(curform[0].jqTransSelected=="true"){return;};
-				curform[0].jqTransSelected="true";
-				
-				var jqTransformHideSelect = function(oTarget){
-					var ulVisible = $('.jqTransformSelectWrapper ul:visible');
-					ulVisible.each(function(){
-						var oSelect = $(this).parents(".jqTransformSelectWrapper:first").find("select").get(0);
-						//do not hide if click on the label object associated to the select
-						if( !(oTarget && oSelect.oLabel && oSelect.oLabel.get(0) == oTarget.get(0)) ){$(this).hide();}
-					});
-				};
-				
-				/* Check for an external click */
-				var jqTransformCheckExternalClick = function(event) {
-					if ($(event.target).parents('.jqTransformSelectWrapper').length === 0) { jqTransformHideSelect($(event.target)); }
-				};
-				
-				var jqTransformAddDocumentListener = function (){
-					$(document).mousedown(jqTransformCheckExternalClick);
-				};
-				
-				if(plugin.jqtransform.selector){
-					curform.find(plugin.jqtransform.selector).filter('input:submit, input:reset, input[type="button"]').jqTransInputButton();
-					curform.find(plugin.jqtransform.selector).filter('input:text, input:password').jqTransInputText();			
-					curform.find(plugin.jqtransform.selector).filter('input:checkbox').jqTransCheckBox();
-					curform.find(plugin.jqtransform.selector).filter('input:radio').jqTransRadio();
-					curform.find(plugin.jqtransform.selector).filter('textarea').jqTransTextarea();
-					if(curform.find(plugin.jqtransform.selector).filter("select").length > 0 ){
-						 curform.find(plugin.jqtransform.selector).filter("select").jqTransSelect();
-						 jqTransformAddDocumentListener();
-					}
-					
-				}else{
-					curform.jqTransform();
-				}
-				
-				curform.find(".jqTransformSelectWrapper").find("li a").click(function(){
-					$(this).parents(".jqTransformSelectWrapper").find("select").trigger("blur");	
-				});
-			}
-
-		},
 		
 		getNullmsg:function(curform){
 			var obj=this;

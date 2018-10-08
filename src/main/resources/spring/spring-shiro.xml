@@ -48,7 +48,7 @@
                 /page/products/** = anon
                 /page/Widget/** = anon
                 /page/login* = anon
-
+                
                 # 除了上面额 /login 可以匿名访问，其他路径都需要登录访问
                 # 如果没登录，就访问其他路径会跳转到 /login 登录
                 /** = authc

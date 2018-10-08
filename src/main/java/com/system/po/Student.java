@@ -3,6 +3,7 @@ package com.system.po;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -26,6 +27,7 @@ public class Student extends Model<Student> {
 	
 	private String address;
 	
+	@JSONField(format="yyyy-MM-dd")
 	private Date birthday;
 
 	/**年级，0:幼儿园 1：一年级 2：二年级 。。。*/
@@ -46,12 +48,17 @@ public class Student extends Model<Student> {
 	
 	private String remark;
 	
+	@JSONField(format="yyyy-MM-dd HH:mm:ss")
 	@TableField(value="create_time")
 	private Date createTime;
 	
+	@JSONField(format="yyyy-MM-dd HH:mm:ss")
 	@TableField(value="update_time")
 	private Date updateTime;
 
+	/**学员卡号*/
+	@TableField(value="card_no")
+	private String cardNo;
 	@Override
 	protected Serializable pkVal() {
 		return id;
@@ -184,5 +191,15 @@ public class Student extends Model<Student> {
 	public void setCourseName(String courseName) {
 		this.courseName = courseName;
 	}
+
+	public String getCardNo() {
+		return cardNo;
+	}
+
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
+	
+	
 
 }

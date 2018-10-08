@@ -228,6 +228,15 @@ public class StudentCourseController {
     	studentCourse.setUpdateTime(new Date());
     	studentCourseService.updateById(studentCourse);
     	
+    	//如果刷课的该卡次剩余次数为0，卡次状态更新为已用尽
+    	if (studentCourse.getRemainNum() == 0) {
+    		studentCourse.setStatus(3);
+    		StudentCourse studentCourse2 = studentCourseService.getAvailableCourse(studentId);
+    		if (studentCourse2 == null) {
+        		logger.warn("此次刷课后，该学生课次已用尽！");
+    		}
+		}
+    	
     	//新增一条消费记录
     	logger.info("新增一条消费记录");
     	StudentConsumptionRecord record =new StudentConsumptionRecord();
@@ -248,5 +257,24 @@ public class StudentCourseController {
     	record.setCreateTime(new Date());
     	studentConsumptionRecordService.insert(record);
     	return JsonUtil.toResponseObj(ResponseCode.SUCCESS,record);
+    }
+    
+    /**
+     * @description:卡次切换
+     * @author: lei.zhang2@100credit.com
+     * @time: 2018年9月26日 下午4:52:57
+     * @param id
+     */
+    @RequestMapping(value = "/courseChange")
+    @ResponseBody
+    public String courseChange(@RequestParam(value = "id",required = true) Integer id) throws Exception {
+    	StudentCourse course = studentCourseService.selectById(id);
+    	StudentCourse studentCourse = studentCourseService.getAvailableCourse(course.getStudentId());
+    	studentCourse.setStatus(2);
+    	studentCourseService.updateById(studentCourse);
+    	
+    	course.setStatus(1);
+    	studentCourseService.updateById(course);
+        return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
     }
 }

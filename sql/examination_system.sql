@@ -164,26 +164,6 @@ CREATE TABLE `teacher` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
-
-
-
-
-
-
--- ----------------------------
--- Table structure for teacher_student 教师学生关联表
--- 当老师或学生离开时，可直接删除记录
--- ----------------------------
-DROP TABLE IF EXISTS `teacher_student`;
-CREATE TABLE `teacher_student` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `teacher_id` int(11) NOT NULL COMMENT '教师id',
-  `student_id` int(11) NOT NULL COMMENT '学生id',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
-
 -- ----------------------------
 -- Table structure for student 学生
 -- ----------------------------
@@ -206,6 +186,43 @@ CREATE TABLE `student` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+-- 学生添加学生卡号字段
+ALTER TABLE student ADD `card_no` varchar(30) DEFAULT '' COMMENT '学员卡号';
+
+-- ----------------------------
+-- Table structure for lesson 课程
+-- ----------------------------
+DROP TABLE IF EXISTS `lesson`;
+CREATE TABLE `lesson` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` int(2) NOT NULL COMMENT '课程类型',
+  `name` varchar(50) NOT NULL COMMENT '课程名称',
+  `remark` varchar(200) NOT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for student_lesson 学生教师课程信息
+-- 这个必须用时间段来细分
+-- ----------------------------
+DROP TABLE IF EXISTS `student_lesson`;
+CREATE TABLE `student_lesson` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `student_id` int(11) NOT NULL COMMENT '学生id',
+  `teacher_id` int(11) NOT NULL COMMENT '教师id',
+  `lesson_id` int(11) NOT NULL COMMENT '课程id',
+  `lesson_name` varchar(50) NOT NULL COMMENT '课程名称',
+  `use_course_num` int(3) NOT NULL COMMENT '刷课使用卡次次数',
+  `week` int(1) NOT NULL COMMENT '周几上课，1,3 代表周一，周三上课',
+  `start_time` time NOT NULL COMMENT '开始时间',
+  `end_time` time NOT NULL COMMENT '结束时间',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 
 
 -- ----------------------------
@@ -252,47 +269,9 @@ CREATE TABLE `student_course` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
--- ----------------------------
--- Table structure for lesson 课程
--- ----------------------------
-DROP TABLE IF EXISTS `lesson`;
-CREATE TABLE `lesson` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` int(2) NOT NULL COMMENT '课程类型',
-  `name` varchar(50) NOT NULL COMMENT '课程名称',
-  `remark` varchar(200) NOT NULL COMMENT '备注',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
-
-
 
 -- ----------------------------
--- Table structure for student_lesson 学生课程信息，一对多
--- ----------------------------
-DROP TABLE IF EXISTS `student_lesson`;
-CREATE TABLE `student_lesson` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `student_id` int(11) NOT NULL COMMENT '学生id',
-  `lesson_id` int(11) NOT NULL COMMENT '课程id',
-  `lesson_name` varchar(50) NOT NULL COMMENT '课程名称',
-  `use_course_num` int(3) NOT NULL COMMENT '刷课使用卡次次数',
-  `week` int(1) NOT NULL COMMENT '周几上课，1,3 代表周一，周三上课',
-  `start_time` time NOT NULL COMMENT '开始时间',
-  `end_time` time NOT NULL COMMENT '结束时间',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
-
-
-
-
--- ----------------------------
--- Table structure for student_recharge_record 学生充值缴费记录
+-- Table structure for student_recharge_record 学生充值记录
 -- 包括课程，活动（考级也是活动），不包括材料，材料在库存统计
 -- ----------------------------
 DROP TABLE IF EXISTS `student_recharge_record`;

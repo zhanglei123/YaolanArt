@@ -129,9 +129,9 @@ jQuery(function($) {
 				$("#name").val(data.object.name);
 				var sex = data.object.sex;
 				if(sex == 1){
-					$("#sex").html("男");
+					$("#man").attr("checked","checked");
 				}else{
-					$("#sex").html("女");
+					$("#woman").attr("checked","checked");
 				}
 				$("#phone").val(data.object.phone);
 				$("#idCard").val(data.object.idCard);

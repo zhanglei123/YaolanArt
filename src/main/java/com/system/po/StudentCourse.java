@@ -50,7 +50,7 @@ public class StudentCourse extends Model<StudentCourse> {
 	@TableField(value="remain_money")
 	private BigDecimal remainMoney;
 	
-	/**状态 1:可用,2:冻结*/
+	/**状态 1:可用,2:冻结,3:已用尽*/
 	private Integer status;
 	
 	@TableField(value="create_time")

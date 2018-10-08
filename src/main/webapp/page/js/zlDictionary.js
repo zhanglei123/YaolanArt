@@ -14,3 +14,10 @@ var TeacherStatusEnum = {1:"全职", 2:"兼职", 3:"离职"};
 var CourseCardTypeEnum = {1:"年卡", 2:"季卡"};
 /**卡次类型*/
 var CoursePromotionTypeEnum = {1:"促销活动", 2:"赠课活动"};
+
+/**学员来源类型*/
+var StudentSourceTypeEnum = {1:"老生推荐", 2:"传单", 3:"广告牌", 4:"上门"};
+
+/**学员年级类型*/
+var StudentGradeEnum = {0:"幼儿园", 1:"一年级", 2:"二年级", 3:"三年级", 
+		4:"四年级", 5:"五年级", 6:"六年级", 7:"七年级", 8:"八年级", 9:"九年级", 10:"其他"};

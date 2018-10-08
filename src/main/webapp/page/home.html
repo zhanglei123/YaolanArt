@@ -7,15 +7,64 @@
 <link rel="stylesheet" href="assets/css/ace.min.css" />
 <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
 <link href="assets/css/codemirror.css" rel="stylesheet"/>
-
 <script src="assets/dist/echarts.js"></script>
 <script src="js/jquery.js"></script>
 <script src="assets/js/ace-extra.min.js"></script>
+<script type="text/javascript" src="js/myTime.js"></script>
+<script type="text/javascript">
+	//面包屑返回值
+	var index = parent.layer.getFrameIndex(window.name);
+	parent.layer.iframeAuto(index);
+	$('.no-radius').on('click', function() {
+		var cname = $(this).attr("title");
+		var chref = $(this).attr("href");
+		var cnames = parent.$('.Current_page').html();
+		var herf = parent.$("#iframe").attr("src");
+		parent.$('#parentIframe').html(cname);
+		parent.$('#iframe').attr("src", chref).ready();
+		;
+		parent.$('#parentIframe').css("display", "inline-block");
+		parent.$('.Current_page').attr({
+			"name" : herf,
+			"href" : "javascript:void(0)"
+		}).css({
+			"color" : "#4c8fbd",
+			"cursor" : "pointer"
+		});
+		parent.layer.close(index);
 
-<!-- 打印相关 -->
-<object  id="LODOP_OB" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0> 
-       <embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>
-</object>
+	});
+	$(document).ready(function() {
+		$(".t_Record").width($(window).width() - 640);
+		//当文档窗口发生改变时 触发  
+		$(window).resize(function() {
+			$(".t_Record").width($(window).width() - 640);
+		});
+		
+		//初始化数据
+		$.ajax({
+			type : "post",
+			dataType : "json",
+			url : '/user/getInitData.do',
+			success : function(data) {
+				if(data.code == "00"){
+					$("#loginTime").html($.myTime.TimestampToTime3(data.loginLog.createTime));
+					$("#ip").html(data.loginLog.ip);
+					$("#studentCount").html(data.studentCount);
+				}else{
+					layer.msg("初始化首页信息失败！",{time:1000,icon:2});
+				}
+			}
+		});
+		
+	});
+	
+	
+	
+	
+	
+</script>
+
 </head>
 <body>
 	<div class="page-content clearfix">
@@ -27,19 +76,19 @@
 			欢迎使用
 			<strong class="green">
 				后台管理系统
-				<small>(v1.2)</small>
+				<small>(v1.0)</small>
 			</strong>
-			,你本次登录时间为2016年7月12日13时34分，登录IP:192.168.1.110.
+			,你本次登录时间为<i id = "loginTime"></i>,登录IP:<i id = "ip"></i>.
 		</div>
 		<div class="state-overview clearfix">
 			<div class="col-lg-3 col-sm-6">
-				<section class="panel"> <a href="#" title="商城会员">
+				<section class="panel"> <a href="#" title="学员数量">
 					<div class="symbol terques">
 						<i class="icon-user"></i>
 					</div>
 					<div class="value">
-						<h1>34522</h1>
-						<p>商城用户</p>
+						<h1 id = "studentCount"></h1>
+						<p>学员数量</p>
 					</div>
 				</a> </section>
 			</div>
@@ -50,7 +99,7 @@
 				</div>
 				<div class="value">
 					<h1>140</h1>
-					<p>分销记录</p>
+					<p>本月上课记录</p>
 				</div>
 				</section>
 			</div>
@@ -61,7 +110,7 @@
 				</div>
 				<div class="value">
 					<h1>345</h1>
-					<p>商城订单</p>
+					<p>本月缴费订单</p>
 				</div>
 				</section>
 			</div>
@@ -72,7 +121,7 @@
 				</div>
 				<div class="value">
 					<h1>￥34,500</h1>
-					<p>交易记录</p>
+					<p>本月缴费记录</p>
 				</div>
 				</section>
 			</div>
@@ -274,12 +323,6 @@
 						</i>
 						<h5 class="margin-top">添加文章</h5>
 					</a>
-					<a id="printTest" title="打印测试" class="btn  btn-info btn-sm no-radius">
-						<i class="bigger-200">
-							<img src="images/icon-addwz.png" />
-						</i>
-						<h5 class="margin-top">打印测试</h5>
-					</a>
 				</div>
 			</div>
 
@@ -288,38 +331,3 @@
 	</div>
 </body>
 </html>
-<script type="text/javascript">
-	//面包屑返回值
-	var index = parent.layer.getFrameIndex(window.name);
-	parent.layer.iframeAuto(index);
-	$('.no-radius').on('click', function(){
-		var cname = $(this).attr("title");
-		var chref = $(this).attr("href");
-		var cnames = parent.$('.Current_page').html();
-		var herf = parent.$("#iframe").attr("src");
-	    parent.$('#parentIframe').html(cname);
-	    parent.$('#iframe').attr("src",chref).ready();;
-		parent.$('#parentIframe').css("display","inline-block");
-		parent.$('.Current_page').attr({"name":herf,"href":"javascript:void(0)"}).css({"color":"#4c8fbd","cursor":"pointer"});
-		//parent.$('.Current_page').html("<a href='javascript:void(0)' name="+herf+" class='iframeurl'>" + cnames + "</a>");
-	    parent.layer.close(index);
-		
-	});
-     $(document).ready(function(){
-		 
-		  $(".t_Record").width($(window).width()-640);
-		  //当文档窗口发生改变时 触发  
-    $(window).resize(function(){
-		 $(".t_Record").width($(window).width()-640);
-		});
- 	});
-     
-     $('#printTest').on('click', function(){
-    	
-		
- 	});
-  
-    
-	 
-	 
- </script>

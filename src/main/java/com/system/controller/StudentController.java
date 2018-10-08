@@ -40,10 +40,10 @@ import net.sf.json.JSONObject;
 @RequestMapping(value = "/student")
 public class StudentController {
 	private Logger logger = Logger.getLogger(StudentController.class);
-    @Resource(name = "studentServiceImpl")
+    @Resource
     private StudentService studentService;
-    @Resource(name = "studentLinkmanInfoServiceImpl")
-    private StudentLinkmanInfoService studentLinkmanInfoServiceImpl;
+    @Resource
+    private StudentLinkmanInfoService studentLinkmanInfoService;
 
     @RequestMapping(value = "/list")
     @ResponseBody
@@ -101,7 +101,13 @@ public class StudentController {
     @ResponseBody
     public String getStudentById(@RequestParam(value = "id",required = true) Integer id) throws Exception {
     	Student student = studentService.selectById(id);
-        return JsonUtil.toResponseObj(ResponseCode.SUCCESS,student);
+    	StudentLinkmanInfo linkmanInfo = studentLinkmanInfoService.selectOne(new EntityWrapper<StudentLinkmanInfo>()
+                .eq("student_id", id)
+                );
+    	Map<String, Object> resMap = new HashMap<String, Object>();
+    	resMap.put("student", student);
+    	resMap.put("linkmanInfo", linkmanInfo);
+        return JsonUtil.toResponseObj(ResponseCode.SUCCESS,resMap);
     }
     
     @RequestMapping(value = "/add")
@@ -136,13 +142,15 @@ public class StudentController {
     	studentLinkmanInfo.setRemark("");
     	studentLinkmanInfo.setStudentId(student.getId());
     	studentLinkmanInfo.setIsFirst(1);
-    	studentLinkmanInfoServiceImpl.insert(studentLinkmanInfo);
+    	studentLinkmanInfoService.insert(studentLinkmanInfo);
     	return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
     }
     
     @RequestMapping(value = "/update")
     @ResponseBody
-    public String update(Student student,HttpServletRequest request) throws Exception {
+    public String update(@ModelAttribute Student student,
+    		@ModelAttribute StudentLinkmanInfo studentLinkmanInfo,
+    		HttpServletRequest request) throws Exception {
     	//需要判断图片是否更改过
     	Student sea = studentService.selectById(student.getId());
     	if (!student.getImagePath().equals(sea.getImagePath())) {
@@ -168,6 +176,24 @@ public class StudentController {
     	
     	student.setUpdateTime(new Date());
     	studentService.insertOrUpdate(student);
+    	//更新联系人信息
+    	StudentLinkmanInfo linkmanInfo = studentLinkmanInfoService.selectOne(new EntityWrapper<StudentLinkmanInfo>()
+                .eq("student_id", student.getId()));
+    	if (linkmanInfo != null) {
+    		//更新联系人信息
+    		linkmanInfo.setRelationType(studentLinkmanInfo.getRelationType());
+    		linkmanInfo.setLinkmanSex(studentLinkmanInfo.getLinkmanSex());
+    		linkmanInfo.setLinkmanName(studentLinkmanInfo.getLinkmanName());
+    		linkmanInfo.setLinkmanPhone(studentLinkmanInfo.getLinkmanPhone());
+	    	studentLinkmanInfoService.insertOrUpdate(linkmanInfo);
+		}else {
+			//保存联系人信息
+	    	studentLinkmanInfo.setRemark("");
+	    	studentLinkmanInfo.setStudentId(student.getId());
+	    	studentLinkmanInfo.setIsFirst(1);
+	    	studentLinkmanInfoService.insert(studentLinkmanInfo);
+		}
+    	
         return JsonUtil.toResponseMsg(ResponseCode.SUCCESS);
     }
     

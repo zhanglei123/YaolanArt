@@ -18,7 +18,7 @@ import com.system.util.IpUtil;
 import com.system.util.MailUtil;
 /**
  * @description:联通拨号网络，每次重启路由，ip重新分配
- * 				该定时任务，每天获取ip，当ip变动发送邮件提醒
+ * 				该定时任务，获取ip，当ip变动发送邮件提醒
  * @author: lei.zhang2@100credit.com
  * @time: 2018年9月10日 下午6:56:38
  */
@@ -32,7 +32,7 @@ public class IpCheckTask {
 	
 	
 	@Async
-	@Scheduled(cron = "0 57 19 * * ?")
+	@Scheduled(cron = "0 0 0/1 * * ?")
 	public void taskExecutor(){
 		logger.info("检查公网IP定时任务启动");
 		String networkIP = IpUtil.getPublicNetworkIP();
@@ -45,7 +45,7 @@ public class IpCheckTask {
 			logger.error("数据库未配置network_ip信息");
 		}else {
 			//判断是否相同
-			if (!networkIP.equals(config.getConfigValue())) {
+			if (networkIP !=null && !"".equals(networkIP) && !networkIP.equals(config.getConfigValue())) {
 				//发送邮件提醒
 				MailUtil.alarm("公网ip变更", "变更前ip为："+config.getConfigValue()+"变更后为："+networkIP);
 				//更新数据

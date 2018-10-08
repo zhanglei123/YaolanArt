@@ -12,7 +12,6 @@
 <link rel="stylesheet" href="font/css/font-awesome.min.css" />
 <link href="Widget/icheck/icheck.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
-	/**************************学员编辑************************/
 	.student_detailed_style .type{ 
 	    position:absolute;   
 	    width: 115px;
@@ -105,65 +104,57 @@
 <script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/typeahead-bs2.min.js"></script>           	
 <script src="assets/layer/layer.js" type="text/javascript" ></script>          
-<script src="assets/laydate/laydate.js" type="text/javascript"></script>
 <script src="assets/js/jquery.dataTables.js"></script>
 <script src="assets/js/jquery.dataTables.bootstrap.js"></script>
 <script type="text/javascript" src="js/jquery.uploadView.js"></script>
+<script type="text/javascript" src="js/zlUtil.js"></script>
+<script type="text/javascript" src="js/myTime.js"></script>
+<script src="assets/laydate/laydate.js" type="text/javascript"></script>
 <script type="text/javascript" src="js/zlDictionary.js"></script>
 <script type="text/javascript" >
-var linkmanTable;
-var linkmanTableData=[];
-$(document).ready(function() {
-	//初始化学员来源方式
-	for (var key in StudentSourceTypeEnum){
-		$('#sourceType').append("<option value=\""+key+"\">"+StudentSourceTypeEnum[key]+"</option>");
- 	}
-	
-	//加载列表信息
-	/* linkmanTable = $('#linkmanTable').DataTable({
-		//使用前台服务
-		"paging": false,
-	    "serverSide": false,
-	    "info": false,
-	    "ordering": false,//排序
-	    "searching": false,//是否显示搜索
-	    "bFilter" : true, 
-         "columns" : [ 
-         		{  	//行号
-				    data: "no",
-				    render: function (data, type, row, meta) {
-					     var no = meta.settings._iDisplayStart + meta.row + 1;
-					     return no;
-				    }
-				},{
-         			"data" : "relationType",
-         			"render": function (data, type, full, callback) {
-	                    switch (data) {
-	                          case "1": return "母亲"; break;
-	                          case "2": return "父亲"; break;
-	                          case "3": return "奶奶"; break;
-	                          case "4": return "爷爷"; break;
-	                          case "5": return "姥姥"; break;
-	                          case "6": return "姥爷"; break;
-	                    }
-                   }
-         		},{
-         			"data" : "linkmanName"
-         		}, {
-         			"data" : "linkmanPhone"
-         		},{
-         			"data" : "isFirst"
-         		},{
-         			"data" : null,
-         			"render": function (data, type, row, meta) {
-         				var no = meta.settings._iDisplayStart + meta.row + 1;
-         				var html = /* "<a title='编辑' href='javascript:;' onclick='linkman_edit("+JSON.stringify(row)+")' class='btn btn-xs btn-info' >编辑</a>"+ */
-         					/*"<a title='删除' href='javascript:;'  onclick='linkman_del("+no+")' class='btn btn-xs btn-info' >删除</a>";     
-         		        return html;
-                }
-         }]
-	}); */
-	
+var id;
+jQuery(function($) {
+	//上一个页面传过来的类型教师ID
+	id = zlUrlParm.parm("id");
+	//展示当前用户信息
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : '/student/getStudentById.do',
+		data: {id:id},
+		success : function(data) {
+			if (data.code == "00") {
+				//赋值
+				$("#name").val(data.object.student.name);
+				var sex = data.object.student.sex;
+				if(sex == 1){
+					$("#man").attr("checked","checked");
+				}else{
+					$("#woman").attr("checked","checked");
+				}
+				$("#remark").html(data.object.student.remark);
+				$("#age").val(data.object.student.age);
+				$("#school").val(data.object.student.school);
+				$("#birthday").val(data.object.student.birthday);
+				$("#grade").val(data.object.student.grade);
+				$("#className").val(data.object.student.className);
+				$("#address").val(data.object.student.address);
+				$("#cardNo").val(data.object.student.cardNo);
+				$("#imagePathShow").attr('src', data.object.student.imagePath);
+				for (var key in StudentSourceTypeEnum){
+					$('#sourceType').append("<option value=\""+key+"\">"+StudentSourceTypeEnum[key]+"</option>");
+			 	}
+				$("#sourceType").val(data.object.student.sourceType);
+				
+				$("#relationType").val(data.object.linkmanInfo.relationType);
+				$("#linkmanName").val(data.object.linkmanInfo.linkmanName);
+				$("#linkmanPhone").val(data.object.linkmanInfo.linkmanPhone);
+			} else {
+				location.href = "login.html";
+				layer.close(index);
+			}
+		}
+	});
 	
 	//分类简介控制字数
 	$("#remark").keyup(function(){
@@ -210,7 +201,6 @@ function student_save(file) {
 		});
 		return false;
 	}
-	debugger;
 	//图片
 	var imagePath = $("#showImage").children("img").attr("src");
 	if(imagePath.trim() == "" || imagePath == undefined || imagePath == null || imagePath == "images/image.png"){
@@ -236,8 +226,9 @@ function student_save(file) {
 	$.ajax({
 		type : "post",
 		dataType : "json",
-		url : '/student/add.do',
-		data : {name:$("#name").val(), 
+		url : '/student/update.do',
+		data : {id:id,
+				name:$("#name").val(), 
 				sex:sex,
 				age:$("#age").val(),
 				phone:$("#phone").val(),
@@ -275,13 +266,9 @@ function student_save(file) {
 	});
 	
 }
-
-
 //通过
 var index = parent.layer.getFrameIndex(window.name);
 parent.layer.iframeAuto(index);
-
-	 
 //取消操作
 function cancel_save(){
 	location.href="student_list.html";
@@ -300,7 +287,7 @@ function cancel_save(){
 		<div class="demo l_f js_uploadBox">
 			<div class="logobox">
 				<div class="resizebox js_showBox" id="showImage">
-					<img src="images/image.png"  width="105px" alt="" height="140px" />
+					<img src="images/image.png"  width="105px" alt="" height="140px" id = "imagePathShow"/>
 				</div>
 			</div>
 			<div class="btn-upload">
@@ -310,20 +297,20 @@ function cancel_save(){
 		</div>
 	</div>
   	<ul class="student_content clearfix">
-	    <li class="shop_name"><label class="label_name"><i>* </i>学员名称：</label><input name="学员名称" type="text" id="name" value=""/></li>
+	    <li class="shop_name"><label class="label_name"><i>* </i>学员名称：</label><input name="学员名称" type="text" id="name" value="" /></li>
 	    <li><label class="label_name"><i>* </i>性&nbsp;&nbsp;&nbsp;&nbsp;别：</label>
-	    	<span style="margin-left: 10px;">
-		    	<input name="sex" id = "man" type="radio" value ="1" class="ace" checked="checked"/>
+			<span style="margin-left: 10px;" id="sex">
+		    	<input name="sex" id = "man" type="radio" value ="1" class="ace"/>
 					<span class="lbl">男</span>
 				<input name="sex" id = "woman" type="radio" value ="2" class="ace"/>
 					<span class="lbl">女</span>
 			</span>
 		</li>
-		<li class="label_name"><label class="label_name"><i>* </i>年&nbsp;&nbsp;&nbsp;&nbsp;龄：</label><input name="年龄" type="text" id="age" value=""/></li>
-	    <li><label class="label_name"><i>* </i>生日：</label><input name="生日" type="text" id="birthday" value=""/></li>
-		<li class="label_name"><label class="label_name"><i>* </i>学&nbsp;&nbsp;&nbsp;&nbsp;校：</label><input name="学校" type="text" id="school" value=""/></li>
+		<li class="label_name"><label class="label_name"><i>* </i>年&nbsp;&nbsp;&nbsp;&nbsp;龄：</label><input name="年龄" type="text" id="age" value="" /></li>
+	    <li><label class="label_name"><i>* </i>生日：</label><input name="生日" type="text" id="birthday" value="" /></li>
+		<li class="label_name"><label class="label_name"><i>* </i>学&nbsp;&nbsp;&nbsp;&nbsp;校：</label><input name="学校" type="text" id="school" value="" /></li>
 	    <li><label class="label_name"><i>* </i>年&nbsp;&nbsp;&nbsp;&nbsp;级：</label>
-			<select class="col-xs-7 col-sm-5" name="年级" id="grade" style="margin-left:10px;width: 166.8px">
+			<select class="col-xs-7 col-sm-5" name="年级" id="grade" style="margin-left:10px;width: 166.8px" >
 				<option value="0">幼儿园</option>
 				<option value="1">一年级</option>
 				<option value="2">二年级</option>
@@ -337,10 +324,10 @@ function cancel_save(){
 				<option value="10">其他</option>
 			</select>
 		</li>
-		<li class="label_name"><label class="label_name"><i>* </i>班&nbsp;&nbsp;&nbsp;&nbsp;级：</label><input name="班级" type="text" id="className" value=""/></li>
-		<li class="label_name"><label class="label_name"><i>* </i>家庭住址：</label><input name="家庭住址" type="text" id="address" value=""/></li>
+		<li class="label_name"><label class="label_name"><i>* </i>班&nbsp;&nbsp;&nbsp;&nbsp;级：</label><input name="班级" type="text" id="className" value="" /></li>
+		<li class="label_name"><label class="label_name"><i>* </i>家庭住址：</label><input name="家庭住址" type="text" id="address" value="" /></li>
 	    <li><label class="label_name"><i style="color:#F33">*</i>学员来源：</label>
-			<select class="col-xs-7 col-sm-5" name="学员来源" id="sourceType" style="margin-left:10px;width: 166.8px">
+			<select class="col-xs-7 col-sm-5" name="学员来源" id="sourceType" style="margin-left:10px;width: 166.8px" >
 			</select>
 		</li>
 	   	<li>
@@ -348,7 +335,7 @@ function cancel_save(){
 					<i>*</i>
 					联系人关系
 				</label>
-					<select class="col-xs-7 col-sm-5" name="联系人关系" id="relationType" style="margin-left:10px;width: 166.8px">
+					<select class="col-xs-7 col-sm-5" name="联系人关系" id="relationType" style="margin-left:10px;width: 166.8px" >
 					  <option value ="1" id = "mother" selected="selected" >母亲</option>
 					  <option value ="2" id = "father">父亲</option>
 					  <option value ="3" id = "father">奶奶</option>
@@ -379,10 +366,6 @@ function cancel_save(){
 				</label>
 					<input name="学员卡号" type="text" id="cardNo" class="col-xs-7 col-sm-5 " style="margin-left:10px;width: 166.8px"/>
 			</li>
-		
-		
-		
-		
   	 </ul>
  </div>
  <div class="student_Introduction">
@@ -397,28 +380,11 @@ function cancel_save(){
  </span>
  </div>
  
-<!--  <div class="Store_Introduction">
-  <div class="title_name" ><i style="color:#F33">*</i>联系人信息</div>
- 	 <div class="info">
- 	</div>
- 
- <div class="Store_Introduction">
-  <div class="title_name"><i style="color:#F33">*</i>课程信息</div>
-  <div class="info">
-  </div>
- </div> -->
+
  <div style="text-align:center; width:100%;height:100%;margin-top: 20px;">
-				<button onclick="student_save();" class="btn btn-primary radius" type="submit">保存</button>
-				<button onclick="cancel_save();" class="btn btn-danger  btn-warning" type="button">取消</button>
+	<button onclick="student_save();" class="btn btn-primary radius" type="submit">提交</button>
+	<button onclick="cancel_save();" class="btn btn-danger  btn-warning" type="button">取消</button>
  </div>
-
-
-
-
-
-
-
-
 
 
 
@@ -470,12 +436,18 @@ function cancel_save(){
 
 
 
+
+
+
+
+
 <script type="text/javascript">
 laydate.render({
 	    elem: '#birthday'
 	    ,calendar: true
 	});
 </script>
+
 </body>
 </html>
 

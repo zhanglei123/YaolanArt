@@ -1,7 +1,9 @@
 package com.system.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -11,12 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.system.base.ResponseCode;
+import com.system.po.Student;
 import com.system.po.StudentConsumptionRecord;
 import com.system.service.StudentConsumptionRecordService;
+import com.system.service.StudentService;
 import com.system.util.JsonUtil;
 /**
  * @description:学生刷课记录
@@ -28,8 +33,10 @@ import com.system.util.JsonUtil;
 public class StudentConsumptionRecordController {
 	//private Logger logger = Logger.getLogger(StudentConsumptionRecordController.class);
     
-	@Resource(name = "studentConsumptionRecordServiceImpl")
+	@Resource
     private StudentConsumptionRecordService studentConsumptionRecordService;
+	@Resource
+	private StudentService studentService;
 
     @RequestMapping(value = "/list")
     @ResponseBody
@@ -70,6 +77,30 @@ public class StudentConsumptionRecordController {
     public String getStudentById(@RequestParam(value = "id",required = true) Integer id) throws Exception {
     	StudentConsumptionRecord studentConsumptionRecord = studentConsumptionRecordService.selectById(id);
         return JsonUtil.toResponseObj(ResponseCode.SUCCESS,studentConsumptionRecord);
+    }
+    
+    
+    /**
+     * @description:获取打印信息
+     * @author: lei.zhang2@100credit.com
+     * @time: 2018年9月18日 上午10:41:57
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "getPrintInfo")
+    @ResponseBody
+    public String getPrintInfo(@RequestParam(value = "id",required = true) Integer id) throws Exception {
+    	Map<String, Object> resMap = new HashMap<String, Object>();
+    	resMap.put("code", ResponseCode.SUCCESS.getCode());
+    	resMap.put("message", ResponseCode.SUCCESS.getMsg());
+    	StudentConsumptionRecord studentConsumptionRecord = studentConsumptionRecordService.selectById(id);
+    	resMap.put("record", studentConsumptionRecord);
+    	
+    	Integer studentId = studentConsumptionRecord.getStudentId();
+    	Student student = studentService.selectById(studentId);
+    	resMap.put("student", student);
+    	return JSON.toJSONString(resMap);
     }
   
 }

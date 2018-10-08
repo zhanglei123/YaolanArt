@@ -96,7 +96,7 @@ jQuery(function($) {
 			if(data.code == "00"){
 				//学生基本展示信息赋值
 				$("#student_name").html(data.object.name);
-				$("#student_create_time").html($.myTime.TimestampToTime2(data.object.createTime));
+				$("#student_create_time").html(data.object.createTime);
 				$("#student_school").html(data.object.school);
 				var status = data.object.status;
 				if(status == 1){
@@ -203,6 +203,7 @@ jQuery(function($) {
 					switch (data) {
 	                    case 1: return "<font color=\"green\" style=\"font-weight:bold;\">可用</font>"; break;
 	                    case 2: return "<font color=\"red\" style=\"font-weight:bold;\">冻结</font>"; break;
+	                    case 3: return "<font color=\"gray\" style=\"font-weight:bold;\">已用</font>"; break;
 	                }
 	            }
 			},{
@@ -215,9 +216,12 @@ jQuery(function($) {
 				"render": function (data, type, row, callback) {
 					if(row.status == 2){
 						var html ="<a title='删除' onclick='student_course_del("+row.id+")' href='javascript:;'  class='btn btn-xs btn-info' >删除</a>";     
-				        return html;
-					}else{
+						html = html + "<a title='切换' onclick='student_course_change("+row.id+")' href='javascript:;'  class='btn btn-xs btn-info' >切换</a>";
+						return html;
+					}else if(row.status == 1){
 						return "<font color=\"green\" style=\"font-weight:bold;\">使用中</font>";
+					}else if(row.status == 3){
+						return "<font color=\"gray\" style=\"font-weight:bold;\">已用</font>";
 					}
 	             }
 			}]
@@ -376,6 +380,26 @@ function student_course_del(id) {
 			success : function(data) {
 					if(data.code == "00"){
 						layer.msg("删除成功",{time:1000,icon:1});
+						studentCourseTable.draw(false);
+					}else{
+						layer.msg(data.message,{time:1000,icon:2});
+					}
+			}
+		});
+	});
+}
+
+/*切换使用学生卡次*/
+function student_course_change(id) {
+	layer.confirm('确认要使用该卡次吗？',function(index){
+		$.ajax({
+			type : "post",
+			dataType : "json",
+			url : '/studentCourse/courseChange.do',
+			data : {id:id},
+			success : function(data) {
+					if(data.code == "00"){
+						layer.msg("切换成功",{time:1000,icon:1});
 						studentCourseTable.draw(false);
 					}else{
 						layer.msg(data.message,{time:1000,icon:2});

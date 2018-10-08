@@ -46,7 +46,7 @@ ul {
 }
 .print_container {
 	padding: 20px;
-	width: 188px;
+	width: 270px;
 }
 .section1 {
 	
@@ -77,18 +77,19 @@ jQuery(function($) {
 	$.ajax({
 		type : "post",
 		dataType : "json",
-		url : '/studentConsumptionRecord/getRecordById.do',
+		url : '/studentConsumptionRecord/getPrintInfo.do',
 		data : {id:rechargeId},
 		success : function(data) {
 			if (data.code == "00") {
 				$("#userName").html(trueName);
-				$("#createTime").html(data.object.createTime);
-				$("#rechargeId").html(rechargeId);
-				$("#num").html(data.object.num);
-				$("#studentName").html(data.object.studentName);
-				$("#courseName").html(data.object.courseName);
-				$("#courseRemainNum").html(data.object.courseRemainNum);
-				$("#lessonName").html(data.object.lessonName);
+				$("#createTime").html(data.record.createTime);
+				/* $("#rechargeId").html(rechargeId); */
+				$("#num").html(data.record.num);
+				$("#studentName").html(data.record.studentName);
+				$("#courseName").html(data.record.courseName);
+				$("#courseRemainNum").html(data.record.courseRemainNum);
+				$("#cardNo").html(data.student.cardNo);
+				/* $("#lessonName").html(data.object.lessonName); */
 				
 				$("#print_area").jqprint();
 			} else {
@@ -110,25 +111,26 @@ jQuery(function($) {
 		<h1>瑶蓝艺术中心</h1>
 		<span>——————————————————————————</span>
 		<div class="section2">
-			<label>操作员：   <span id="userName">张三</span></label>
-			<label>操作时间：<span id="createTime">2018-09-10 12:00:00</span></label>
-			<label>小票编号：<span id="rechargeId">012</span></label>
+			<label>操作员: <span id="userName">张三</span></label>
+			<label>操作时间:<span id="createTime">2018-09-10 12:00:00</span></label>
+			<!-- <label>小票编号:<span id="rechargeId">012</span></label> -->
 		</div>
 		<span>——————————————————————————</span>
 		<div class="section3">
-			<label>刷课次数：<span id="num">1</span></label>
+			<label>刷课次数:<span id="num">1</span></label>
 		</div>
 		<span>——————————————————————————</span>
 		<div class="section3">
-			<label>学生姓名：<span id="studentName">张博文</span></label>
-			<label>卡次名称：<span id="courseName">2018年卡一</span></label>
-			<label>卡次余次：<span id="courseRemainNum">12</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-			<label>课程名称：<span id="lessonName">漫画一级</span></label>
+			<label>学生姓名:<span id="studentName">张博文</span></label>
+			<label>学生卡号:<span id="cardNo">张博文</span></label>
+			<label>卡次名称:<span id="courseName">2018年卡一</span></label>
+			<label>卡次余次:<span id="courseRemainNum">12</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+			<!-- <label>课程名称:<span id="lessonName">漫画一级</span></label> -->
 		</div>
 		<span>——————————————————————————</span>
 		<div class="section5">
-			<label>地&nbsp;&nbsp;址：科学院南路新科祥园甲6号楼106</label>
-			<label>电&nbsp;&nbsp;话：12345678</label>
+			<label>地&nbsp;&nbsp;址:新科祥园六号楼1层106室</label>
+			<label>电&nbsp;&nbsp;话:400-672890 18210394498</label>
 		</div>
 	</div>
 </body>
